@@ -1,24 +1,13 @@
 import { ApiError, cookieExpireTime } from "js-ts-kit";
-import { z } from "zod";
 import { BAD_REQUEST_STATUS_CODE } from "../constants.ts";
-import { objectIdSchema } from "../schemas/mongodb.ts";
+import { userSchema } from "../schemas/user.ts";
 import { bcrypt } from "../utilities/security.ts";
 import { jwtToken } from "../utilities/token.ts";
 import { getUserByEmailService } from "./user.ts";
 
 export async function loginService(email: string, passwordInput: string) {
-	const userSchema = z
-		.object({
-			_id: objectIdSchema,
-			username: z.string().min(1),
-			email: z.email(),
-			role: objectIdSchema,
-			password: z.string().min(1),
-			dateCreated: z.date(),
-		})
-		.nullish();
-
-	const user = userSchema.parse(await getUserByEmailService(email));
+	const userResultSchema = userSchema.nullish();
+	const user = userResultSchema.parse(await getUserByEmailService(email));
 	if (!user) {
 		throw new ApiError("Invalid email", BAD_REQUEST_STATUS_CODE);
 	}

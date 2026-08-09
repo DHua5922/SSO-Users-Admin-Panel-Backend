@@ -2,10 +2,12 @@ import "dotenv/config";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Express } from "express";
+import swaggerUi from "swagger-ui-express";
 import { z } from "zod";
 import mongoose from "./config/database.ts";
 import authRouter from "./routes/auth.ts";
 import homeRouter from "./routes/home.ts";
+import { generateOpenApiDocument } from "./utilities/docs.ts";
 
 checkEnvVariables();
 mongoose.connectToMongoDb();
@@ -37,10 +39,6 @@ function checkEnvVariables() {
 }
 
 function runServer(app: Express) {
-	const versionRoute = (url: string, versionNumber: number): string => {
-		return `/api/v${versionNumber}${url}`;
-	};
-
 	app.use(express.json());
 	app.use(
 		cors({
@@ -53,7 +51,9 @@ function runServer(app: Express) {
 	app.use(cookieParser());
 
 	app.use(homeRouter);
-	app.use(`${versionRoute("/auth", 1)}`, authRouter);
+	app.use(authRouter);
+
+	app.use("/docs", swaggerUi.serve, swaggerUi.setup(generateOpenApiDocument()));
 
 	const port = process.env.PORT || 8080;
 	app.listen(port, () => {
