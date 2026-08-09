@@ -1,0 +1,62 @@
+import "dotenv/config";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import express, { type Express } from "express";
+import { z } from "zod";
+import mongoose from "./config/database.ts";
+import authRouter from "./routes/auth.ts";
+import homeRouter from "./routes/home.ts";
+
+checkEnvVariables();
+mongoose.connectToMongoDb();
+
+export const app: Express = express();
+runServer(app);
+
+function checkEnvVariables() {
+	const envSchema = z.object({
+		MONGO_URI: z.string(),
+		ACCESS_TOKEN_NAME: z.string(),
+		ACCESS_TOKEN_EXPIRATION: z.string(),
+		REFRESH_TOKEN_NAME: z.string(),
+		REFRESH_TOKEN_EXPIRATION: z.string(),
+		JWT_SECRET: z.string(),
+		CORS_ORIGIN: z.string(),
+		TEST_LOGIN_EMAIL: z.string().email(),
+		TEST_LOGIN_PASSWORD: z.string().min(8),
+	});
+
+	const envValidation = envSchema.safeParse(process.env);
+	if (!envValidation.success) {
+		console.error(
+			"INVALID ENVIRONMENT VARIABLES:\n",
+			z.treeifyError(envValidation.error),
+		);
+		process.exit(1);
+	}
+}
+
+function runServer(app: Express) {
+	const versionRoute = (url: string, versionNumber: number): string => {
+		return `/api/v${versionNumber}${url}`;
+	};
+
+	app.use(express.json());
+	app.use(
+		cors({
+			origin: process.env.CORS_ORIGIN,
+			credentials: true,
+			allowedHeaders: ["Content-Type", "Authorization"],
+			methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+		}),
+	);
+	app.use(cookieParser());
+
+	app.use(homeRouter);
+	app.use(`${versionRoute("/auth", 1)}`, authRouter);
+
+	const port = process.env.PORT || 8080;
+	app.listen(port, () => {
+		console.log(`Server is running on port ${port}`);
+	});
+}

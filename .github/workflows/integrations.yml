@@ -1,0 +1,35 @@
+name: Integration Tests
+
+on:
+  schedule:
+    - cron: "0 0 * * *"  # every day at midnight (00:00 UTC)
+
+env:
+  NODE_VERSION: "24.x"
+
+jobs:
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout GitHub Action"
+        uses: actions/checkout@v4
+
+      - name: Setup Node ${{ env.NODE_VERSION }} Environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: "Install Dependencies"
+        shell: bash
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          pnpm install
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Run Integration Tests
+        env:
+          TEST_LOGIN_EMAIL: ${{ secrets.TEST_LOGIN_EMAIL }}
+          TEST_LOGIN_PASSWORD: ${{ secrets.TEST_LOGIN_PASSWORD }}
+        run: pnpm run test:integration
