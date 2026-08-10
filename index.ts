@@ -7,6 +7,7 @@ import { z } from "zod";
 import mongoose from "./config/database.ts";
 import authRouter from "./routes/auth.ts";
 import homeRouter from "./routes/home.ts";
+import meRouter from "./routes/me.ts";
 import { generateOpenApiDocument } from "./utilities/docs.ts";
 
 checkEnvVariables();
@@ -52,8 +53,17 @@ function runServer(app: Express) {
 
 	app.use(homeRouter);
 	app.use(authRouter);
+	app.use(meRouter);
 
-	app.use("/docs", swaggerUi.serve, swaggerUi.setup(generateOpenApiDocument()));
+	app.use(
+		"/docs",
+		swaggerUi.serve,
+		swaggerUi.setup(generateOpenApiDocument(), {
+			swaggerOptions: {
+				withCredentials: true,
+			},
+		}),
+	);
 
 	const port = process.env.PORT || 8080;
 	app.listen(port, () => {

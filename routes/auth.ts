@@ -4,7 +4,7 @@ import {
 	errorLoggingMiddleware,
 	loggingMiddleware,
 } from "../middleware/logging.ts";
-import { userSchema } from "../schemas/user.ts";
+import { userResponseSchema, userSchema } from "../schemas/user.ts";
 import { createDocumentedRoute } from "../utilities/docs.ts";
 
 const { router, route } = createDocumentedRoute("/api/v1/auth");
@@ -36,7 +36,7 @@ route(
 			"200": {
 				content: {
 					"application/json": {
-						schema: userSchema.omit({ password: true }),
+						schema: userResponseSchema,
 					},
 				},
 			},

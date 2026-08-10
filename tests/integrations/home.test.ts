@@ -1,10 +1,10 @@
 import request from "supertest";
-import { HOME_RESPONSE_MESSAGE } from "../../constants.ts";
+import { HOME_RESPONSE_MESSAGE, SUCCESS_STATUS_CODE } from "../../constants.ts";
 import { app } from "../../index.ts";
 
 test("should give successful response", async () => {
 	const response = await request(app).get("/");
 
-	expect(response.status).toBe(200);
+	expect(response.status).toBe(SUCCESS_STATUS_CODE);
 	expect(response.text).toEqual(HOME_RESPONSE_MESSAGE);
 });
