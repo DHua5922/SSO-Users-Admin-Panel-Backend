@@ -26,7 +26,11 @@ const testUser = {
 	_id: new Types.ObjectId("507f1f77bcf86cd799439011"),
 	username: "testuser",
 	email: "testUser@example.com",
-	role: new Types.ObjectId("507f1f77bcf86cd799439012"),
+	role: {
+		_id: new Types.ObjectId("507f1f77bcf86cd799439012"),
+		name: "admin",
+		description: "Administrator role",
+	},
 	password: "$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQ8Z/5a6m0j0Z5F5F5F5G",
 	dateCreated: new Date(),
 };
@@ -71,7 +75,7 @@ test("should return user and token information when login is successful", async 
 		user: {
 			...userWithoutPassword,
 			_id: userWithoutPassword._id.toHexString(),
-			role: userWithoutPassword.role.toHexString(),
+			role: userWithoutPassword.role.name,
 		},
 		accessToken: "accessToken",
 		refreshToken: "refreshToken",

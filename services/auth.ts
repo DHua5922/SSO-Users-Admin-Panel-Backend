@@ -1,13 +1,12 @@
 import { ApiError, cookieExpireTime } from "js-ts-kit";
 import { BAD_REQUEST_STATUS_CODE } from "../constants.ts";
-import { userSchema } from "../schemas/user.ts";
+import { userResponseSchema } from "../schemas/user.ts";
 import { bcrypt } from "../utilities/security.ts";
 import { jwtToken } from "../utilities/token.ts";
 import { getUserByEmailService } from "./user.ts";
 
 export async function loginService(email: string, passwordInput: string) {
-	const userResultSchema = userSchema.nullish();
-	const user = userResultSchema.parse(await getUserByEmailService(email));
+	const user = await getUserByEmailService(email);
 	if (!user) {
 		throw new ApiError("Invalid email", BAD_REQUEST_STATUS_CODE);
 	}
@@ -23,9 +22,8 @@ export async function loginService(email: string, passwordInput: string) {
 	const accessTokenExpireTime = process.env.ACCESS_TOKEN_EXPIRATION || "15m";
 	const refreshTokenExpireTime = process.env.REFRESH_TOKEN_EXPIRATION || "7d";
 
-	const { password, ...userWithoutPassword } = user;
 	return {
-		user: userWithoutPassword,
+		user: userResponseSchema.parse(user),
 		accessToken: jwtToken.create({
 			userId: user._id,
 			type: "access",
@@ -33,6 +31,7 @@ export async function loginService(email: string, passwordInput: string) {
 		}),
 		refreshToken: jwtToken.create({
 			userId: user._id,
+
 			type: "refresh",
 			expiresIn: refreshTokenExpireTime,
 		}),

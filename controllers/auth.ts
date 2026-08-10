@@ -4,7 +4,7 @@ import { loginService } from "../services/auth.ts";
 
 const standardCookieOptions = {
 	httpOnly: true,
-	secure: true,
+	secure: process.env.NODE_ENV === "production",
 };
 
 export async function loginController(req: Request, res: Response) {
