@@ -12,7 +12,7 @@
 		"check:unused": "pnpm knip",
 		"typescript:check": "tsc --noEmit",
 		"test:unit": "vitest run tests/unit --coverage",
-		"test:integration": "cross-env NODE_ENV=test TEST_TYPE=integration vitest run tests/integrations --coverage"
+		"test:integrations": "cross-env NODE_ENV=test TEST_TYPE=integration vitest run tests/integrations --coverage"
 	},
 	"keywords": [],
 	"author": "",

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
 	loginController,
+	logoutController,
 	refreshTokensController,
 } from "../controllers/auth.ts";
 import {
@@ -49,6 +50,28 @@ route(
 	},
 	loggingMiddleware,
 	errorLoggingMiddleware(loginController),
+);
+
+route(
+	{
+		path: "/logout",
+		method: "post",
+		tags,
+		summary: "Log out",
+		description:
+			"Log out the user by clearing the access token and refresh token cookies.",
+		responses: {
+			"200": {
+				content: {
+					"application/json": {
+						schema: z.boolean(),
+					},
+				},
+			},
+		},
+	},
+	loggingMiddleware,
+	errorLoggingMiddleware(logoutController),
 );
 
 route(
