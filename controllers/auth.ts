@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { SUCCESS_STATUS_CODE } from "../constants.ts";
-import { loginService } from "../services/auth.ts";
+import { loginService, refreshTokensService } from "../services/auth.ts";
 
 const standardCookieOptions = {
 	httpOnly: true,
@@ -11,13 +11,50 @@ export async function loginController(req: Request, res: Response) {
 	const {
 		user,
 		accessToken,
-		cookieAccessTokenExpireTime,
 		refreshToken,
+		cookieAccessTokenExpireTime,
 		cookieRefreshTokenExpireTime,
 	} = await loginService(req.body.email, req.body.password);
 
+	setCookies(
+		res,
+		accessToken,
+		refreshToken,
+		cookieAccessTokenExpireTime,
+		cookieRefreshTokenExpireTime,
+	);
+
+	res.status(SUCCESS_STATUS_CODE).json(user);
+}
+
+export async function refreshTokensController(req: Request, res: Response) {
+	const oldRefreshToken = req.cookies[process.env.REFRESH_TOKEN_NAME || ""];
+	const {
+		accessToken,
+		refreshToken,
+		cookieAccessTokenExpireTime,
+		cookieRefreshTokenExpireTime,
+	} = await refreshTokensService(oldRefreshToken);
+
+	setCookies(
+		res,
+		accessToken,
+		refreshToken,
+		cookieAccessTokenExpireTime,
+		cookieRefreshTokenExpireTime,
+	);
+
+	res.status(SUCCESS_STATUS_CODE).json(true);
+}
+
+function setCookies(
+	res: Response,
+	accessToken: string,
+	refreshToken: string,
+	cookieAccessTokenExpireTime: Date,
+	cookieRefreshTokenExpireTime: Date,
+) {
 	res
-		.status(SUCCESS_STATUS_CODE)
 		.cookie(process.env.ACCESS_TOKEN_NAME || "", accessToken, {
 			...standardCookieOptions,
 			sameSite: "lax",
@@ -27,6 +64,5 @@ export async function loginController(req: Request, res: Response) {
 			...standardCookieOptions,
 			sameSite: "strict",
 			expires: cookieRefreshTokenExpireTime,
-		})
-		.json(user);
+		});
 }
