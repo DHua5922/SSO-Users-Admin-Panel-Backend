@@ -8,7 +8,7 @@ beforeEach(async () => {
 	agent = await createAuthenticatedAgent();
 });
 
-test("should give successful response", async () => {
+test("should give authenticated user", async () => {
 	const response = await agent.get("/api/v1/me");
 
 	expect(response.status).toBe(SUCCESS_STATUS_CODE);

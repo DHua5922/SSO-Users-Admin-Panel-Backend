@@ -8,8 +8,15 @@ beforeEach(async () => {
 	agent = await createAuthenticatedAgent();
 });
 
-test("should give successful response", async () => {
+test("should refresh tokens", async () => {
 	const response = await agent.post("/api/v1/auth/tokens/new");
+
+	expect(response.status).toBe(SUCCESS_STATUS_CODE);
+	expect(response.body).toEqual(true);
+});
+
+test("should log out successfully", async () => {
+	const response = await agent.post("/api/v1/auth/logout");
 
 	expect(response.status).toBe(SUCCESS_STATUS_CODE);
 	expect(response.body).toEqual(true);
