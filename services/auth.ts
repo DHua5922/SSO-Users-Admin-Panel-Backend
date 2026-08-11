@@ -19,19 +19,29 @@ export async function loginService(email: string, passwordInput: string) {
 		throw new ApiError("Invalid password", BAD_REQUEST_STATUS_CODE);
 	}
 
+	return {
+		user: userResponseSchema.parse(user),
+		...createTokens(user._id),
+	};
+}
+
+export async function refreshTokensService(refreshToken: string) {
+	const tokenPayload = jwtToken.decode(refreshToken);
+	return createTokens(tokenPayload.userId);
+}
+
+function createTokens(userId: string) {
 	const accessTokenExpireTime = process.env.ACCESS_TOKEN_EXPIRATION || "15m";
 	const refreshTokenExpireTime = process.env.REFRESH_TOKEN_EXPIRATION || "7d";
 
 	return {
-		user: userResponseSchema.parse(user),
 		accessToken: jwtToken.create({
-			userId: user._id,
+			userId,
 			type: "access",
 			expiresIn: accessTokenExpireTime,
 		}),
 		refreshToken: jwtToken.create({
-			userId: user._id,
-
+			userId,
 			type: "refresh",
 			expiresIn: refreshTokenExpireTime,
 		}),
