@@ -1,8 +1,11 @@
 import { ApiError, cookieExpireTime } from "js-ts-kit";
-import { BAD_REQUEST_STATUS_CODE } from "../constants.ts";
+import {
+	BAD_REQUEST_STATUS_CODE,
+	WRONG_PASSWORD_ERROR_MESSAGE,
+} from "../constants.ts";
 import { userResponseSchema } from "../schemas/user.ts";
 import { bcrypt } from "../utilities/security.ts";
-import { jwtToken } from "../utilities/token.ts";
+import { checkRefreshTokenType, jwtToken } from "../utilities/token.ts";
 import { getUserByEmailService } from "./user.ts";
 
 export async function loginService(email: string, passwordInput: string) {
@@ -16,7 +19,7 @@ export async function loginService(email: string, passwordInput: string) {
 		passwordInput,
 	);
 	if (!isMatchingPassword) {
-		throw new ApiError("Invalid password", BAD_REQUEST_STATUS_CODE);
+		throw new ApiError(WRONG_PASSWORD_ERROR_MESSAGE, BAD_REQUEST_STATUS_CODE);
 	}
 
 	return {
@@ -27,6 +30,9 @@ export async function loginService(email: string, passwordInput: string) {
 
 export async function refreshTokensService(refreshToken: string) {
 	const tokenPayload = jwtToken.decode(refreshToken);
+
+	checkRefreshTokenType(tokenPayload?.type);
+
 	return createTokens(tokenPayload.userId);
 }
 
