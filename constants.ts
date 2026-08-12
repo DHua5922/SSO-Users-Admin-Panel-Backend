@@ -9,3 +9,9 @@ export const HOME_RESPONSE_MESSAGE = "This is working!";
 export const WRONG_ROLE_ERROR_MESSAGE =
 	"Only administrators can use this route";
 export const UNAUTHORIZED_ERROR_MESSAGE = "Not authorized to use this route";
+
+export const EMPTY_USERNAME_ERROR_MESSAGE = "Username cannot be empty";
+export const EMPTY_EMAIL_ERROR_MESSAGE = "Email cannot be empty";
+export const EMPTY_PASSWORD_ERROR_MESSAGE =
+	"Password is required for new users";
+export const NO_MATCHING_PASSWORDS_ERROR_MESSAGE = "No matching passwords";

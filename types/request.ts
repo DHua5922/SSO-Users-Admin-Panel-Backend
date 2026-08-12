@@ -1,13 +1,5 @@
 import type { Request } from "express";
-
-interface User {
-	_id: string;
-	username: string;
-	email: string;
-	role: string;
-	password: string;
-	dateCreated: Date;
-}
+import type { User } from "../schemas/user.ts";
 
 export interface RequestWithUser extends Request {
 	user?: User;

@@ -2,11 +2,6 @@ import type { Request, Response } from "express";
 import { SUCCESS_STATUS_CODE } from "../constants.ts";
 import { loginService, refreshTokensService } from "../services/auth.ts";
 
-const standardCookieOptions = {
-	httpOnly: true,
-	secure: process.env.NODE_ENV === "production",
-};
-
 export async function loginController(req: Request, res: Response) {
 	const {
 		user,
@@ -60,6 +55,11 @@ function setCookies(
 	cookieAccessTokenExpireTime: Date,
 	cookieRefreshTokenExpireTime: Date,
 ) {
+	const standardCookieOptions = {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+	};
+
 	res
 		.cookie(process.env.ACCESS_TOKEN_NAME || "", accessToken, {
 			...standardCookieOptions,
