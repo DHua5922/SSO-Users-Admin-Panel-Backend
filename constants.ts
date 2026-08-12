@@ -14,4 +14,8 @@ export const EMPTY_USERNAME_ERROR_MESSAGE = "Username cannot be empty";
 export const EMPTY_EMAIL_ERROR_MESSAGE = "Email cannot be empty";
 export const EMPTY_PASSWORD_ERROR_MESSAGE =
 	"Password is required for new users";
+export const WRONG_PASSWORD_ERROR_MESSAGE = "Password is incorrect";
 export const NO_MATCHING_PASSWORDS_ERROR_MESSAGE = "No matching passwords";
+
+export const INVALID_ACCESS_TOKEN_ERROR_MESSAGE = "Invalid access token";
+export const INVALID_REFRESH_TOKEN_ERROR_MESSAGE = "Invalid refresh token";

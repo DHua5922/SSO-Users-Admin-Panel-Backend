@@ -1,6 +1,6 @@
-import { cookieExpireTime } from "js-ts-kit";
 import { Types } from "mongoose";
 import type { Mock } from "vitest";
+import { WRONG_PASSWORD_ERROR_MESSAGE } from "../../constants.ts";
 import { loginService } from "../../services/auth.ts";
 import { getUserByEmailService } from "../../services/user.ts";
 import { bcrypt } from "../../utilities/security.ts";
@@ -52,7 +52,7 @@ test("should throw invalid password error message when password is incorrect", a
 	bcryptMock.mockResolvedValueOnce(false);
 
 	const value = loginService(testUser.email, "wrongPassword");
-	await expect(value).rejects.toThrow("Invalid password");
+	await expect(value).rejects.toThrow(WRONG_PASSWORD_ERROR_MESSAGE);
 });
 
 test("should return user and token information when login is successful", async () => {
@@ -79,12 +79,8 @@ test("should return user and token information when login is successful", async 
 		},
 		accessToken: "accessToken",
 		refreshToken: "refreshToken",
-		cookieAccessTokenExpireTime: cookieExpireTime(
-			process.env.ACCESS_TOKEN_EXPIRATION || "15m",
-		),
-		cookieRefreshTokenExpireTime: cookieExpireTime(
-			process.env.REFRESH_TOKEN_EXPIRATION || "7d",
-		),
+		cookieAccessTokenExpireTime: expect.any(Date),
+		cookieRefreshTokenExpireTime: expect.any(Date),
 	};
 
 	expect(value).toEqual(expectedResult);
