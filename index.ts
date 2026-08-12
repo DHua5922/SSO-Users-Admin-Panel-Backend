@@ -8,6 +8,7 @@ import mongoose from "./config/database.ts";
 import authRouter from "./routes/auth.ts";
 import homeRouter from "./routes/home.ts";
 import meRouter from "./routes/me.ts";
+import userRouter from "./routes/user.ts";
 import { generateOpenApiDocument } from "./utilities/docs.ts";
 
 checkEnvVariables();
@@ -54,6 +55,7 @@ function runServer(app: Express) {
 	app.use(homeRouter);
 	app.use(authRouter);
 	app.use(meRouter);
+	app.use(userRouter);
 
 	app.use(
 		"/docs",
