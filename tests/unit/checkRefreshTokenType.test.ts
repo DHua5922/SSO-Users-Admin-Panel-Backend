@@ -1,9 +1,9 @@
-import { INVALID_ACCESS_TOKEN_ERROR_MESSAGE } from "../../constants.ts";
+import { INVALID_REFRESH_TOKEN_ERROR_MESSAGE } from "../../constants.ts";
 import { checkRefreshTokenType } from "../../utilities/token.ts";
 
 test("should throw an error if the token type is not refresh", () => {
 	expect(() => checkRefreshTokenType("access")).toThrow(
-		INVALID_ACCESS_TOKEN_ERROR_MESSAGE,
+		INVALID_REFRESH_TOKEN_ERROR_MESSAGE,
 	);
 });
 
