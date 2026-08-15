@@ -29,10 +29,10 @@ export async function getAllUsersService() {
 export async function upsertUserService(
 	userToUpdateInput: UpsertUserServiceInput,
 ) {
-	const { confirmPassword, password, ...userInput } =
+	const { confirmPassword, password, _id: userInputId, ...userInput } =
 		upsertUserServiceInputSchema.parse(userToUpdateInput);
 
-	const userId = userInput._id || new Types.ObjectId().toHexString();
+	const userId = userInputId || new Types.ObjectId().toHexString();
 
 	const updatedUser = await upsertUserDal(userId, {
 		...userInput,

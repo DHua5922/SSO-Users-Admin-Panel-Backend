@@ -36,12 +36,12 @@ test("should create user", async () => {
 		role: adminRoleId,
 	};
 	const expectedResponseBody = {
-		_id: expect.any(String),
-		username: newUser.username,
-		email: newUser.email,
-		role: expect.any(String),
-		dateCreated: expect.any(String),
-	};
+    _id: expect.any(String),
+    username: newUser.username,
+    email: newUser.email,
+    role: adminRoleId,
+    dateCreated: expect.any(String),
+  };
 
 	const response = await agent.put(baseRoute).send(newUser);
 	expect(response.status).toBe(SUCCESS_STATUS_CODE);
@@ -69,7 +69,7 @@ test("should update user", async () => {
 		_id: updatedUser._id,
 		username: updatedUser.username,
 		email: updatedUser.email,
-		role: expect.any(String),
+		role: adminRoleId,
 		dateCreated: createResponse.body.dateCreated,
 	};
 
@@ -82,12 +82,12 @@ test("should update user", async () => {
 
 async function deleteTestUser(userId: string) {
 	const expectedResponseBody = {
-		_id: userId,
-		username: expect.any(String),
-		email: expect.any(String),
-		role: expect.any(String),
-		dateCreated: expect.any(String),
-	};
+    _id: userId,
+    username: expect.any(String),
+    email: expect.any(String),
+    role: adminRoleId,
+    dateCreated: expect.any(String),
+  };
 	const deleteResponse = await agent.delete(`${baseRoute}/${userId}`);
 
 	expect(deleteResponse.status).toBe(SUCCESS_STATUS_CODE);

@@ -82,10 +82,10 @@ test("should create a new user successfully", async () => {
 		dateCreated,
 	};
 	const { password, ...expectedResult } = {
-		...createUserResult,
-		_id: userId.toHexString(),
-		role: createUserResult.role.name,
-	};
+    ...createUserResult,
+    _id: userId.toHexString(),
+    role: roleId.toHexString(),
+  };
 
 	mockUpsertUser(createUserResult);
 	await expect(upsertUserService(createUserServiceInput)).resolves.toEqual(
@@ -110,10 +110,10 @@ test("should update an existing user successfully", async () => {
 	};
 
 	const expectedUpdateUserServiceResult = {
-		...updateUserResult,
-		_id: userId.toHexString(),
-		role: populatedRole.name,
-	};
+    ...updateUserResult,
+    _id: userId.toHexString(),
+    role: roleId.toHexString(),
+  };
 
 	mockUpsertUser(updateUserResult);
 	await expect(upsertUserService(updateUserServiceInput)).resolves.toEqual(

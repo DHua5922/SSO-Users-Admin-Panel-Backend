@@ -2,10 +2,12 @@ import { ApiError } from "js-ts-kit";
 import { TokenExpiredError } from "jsonwebtoken";
 import {
 	BAD_REQUEST_STATUS_CODE,
+	EMPTY_PASSWORD_ERROR_MESSAGE,
 	INTERNAL_SERVER_ERROR_STATUS_CODE,
 	UNAUTHORIZED_STATUS_CODE,
 } from "../../constants.ts";
 import { parseError } from "../../middleware/logging.ts";
+import { z } from "zod";
 
 test("should return default error message", () => {
 	const errorMessage = "Default error message";
@@ -44,4 +46,18 @@ test("should return token expired error message", () => {
 
 	expect(value.status).toEqual(UNAUTHORIZED_STATUS_CODE);
 	expect(value.message).toEqual(errorMessage);
+});
+
+test("should convert Zod error to bad request error", () => {
+  const schema = z.string().min(1, EMPTY_PASSWORD_ERROR_MESSAGE);
+  const result = schema.safeParse("");
+
+  if (result.success) {
+    throw new Error("Expected validation to fail");
+  }
+
+  const value = parseError(result.error);
+
+  expect(value.status).toBe(BAD_REQUEST_STATUS_CODE);
+  expect(value.message).toBe(EMPTY_PASSWORD_ERROR_MESSAGE);
 });
