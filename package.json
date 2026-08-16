@@ -10,7 +10,7 @@
 		"biome:check": "pnpx @biomejs/biome check",
 		"biome:fix": "pnpm biome:check --write",
 		"check:unused": "pnpm knip",
-		"typescript:check": "tsc --noEmit",
+		"typescript:check": "tsc -b",
 		"test:unit": "vitest run tests/unit --coverage",
 		"test:integrations": "cross-env NODE_ENV=test TEST_TYPE=integration vitest run tests/integrations --coverage"
 	},

@@ -6,3 +6,5 @@ export const roleSchema = z.object({
 	name: z.string().min(1),
 	description: z.string().optional(),
 });
+
+export type Role = z.infer<typeof roleSchema>;

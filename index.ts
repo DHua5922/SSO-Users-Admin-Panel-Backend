@@ -8,6 +8,7 @@ import mongoose from "./config/database.ts";
 import authRouter from "./routes/auth.ts";
 import homeRouter from "./routes/home.ts";
 import meRouter from "./routes/me.ts";
+import roleRouter from "./routes/role.ts";
 import userRouter from "./routes/user.ts";
 import { generateOpenApiDocument } from "./utilities/docs.ts";
 
@@ -56,6 +57,7 @@ function runServer(app: Express) {
 	app.use(authRouter);
 	app.use(meRouter);
 	app.use(userRouter);
+	app.use(roleRouter);
 
 	app.use(
 		"/docs",

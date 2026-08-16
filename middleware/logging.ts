@@ -6,7 +6,9 @@ import {
 	DefaultError,
 } from "js-ts-kit";
 import type { TokenExpiredError } from "jsonwebtoken";
+import { z } from "zod";
 import {
+	BAD_REQUEST_STATUS_CODE,
 	INTERNAL_SERVER_ERROR_STATUS_CODE,
 	UNAUTHORIZED_STATUS_CODE,
 } from "../constants.ts";
@@ -64,25 +66,34 @@ function logRequest(console: Console, req: Request, label: string) {
 }
 
 export function parseError(err: unknown) {
-	let error = new ApiError(
-		DefaultError.message(err),
-		INTERNAL_SERVER_ERROR_STATUS_CODE,
-	);
-
 	if ((err as ApiError).status && (err as ApiError).message) {
 		const apiError = err as ApiError;
-		error = new ApiError(apiError.message, apiError.status);
-	} else if (DatabaseError.isSequelizeError(err)) {
-		error = new ApiError(
+		return new ApiError(apiError.message, apiError.status);
+	}
+
+	if (err instanceof z.ZodError) {
+		return new ApiError(
+			err.issues[0]?.message || "Invalid input",
+			BAD_REQUEST_STATUS_CODE,
+		);
+	}
+
+	if (DatabaseError.isSequelizeError(err)) {
+		return new ApiError(
 			DatabaseError.sequelize(err),
 			INTERNAL_SERVER_ERROR_STATUS_CODE,
 		);
-	} else if ((err as TokenExpiredError).name === "TokenExpiredError") {
-		error = new ApiError(
+	}
+
+	if ((err as TokenExpiredError).name === "TokenExpiredError") {
+		return new ApiError(
 			(err as TokenExpiredError).message,
 			UNAUTHORIZED_STATUS_CODE,
 		);
 	}
 
-	return error;
+	return new ApiError(
+		DefaultError.message(err),
+		INTERNAL_SERVER_ERROR_STATUS_CODE,
+	);
 }

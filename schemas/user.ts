@@ -36,9 +36,7 @@ export const upsertUserServiceInputSchema = z
 			message: EMPTY_EMAIL_ERROR_MESSAGE,
 		}),
 		role: objectIdStringSchema,
-		password: passwordSchema
-			.min(1, { message: EMPTY_PASSWORD_ERROR_MESSAGE })
-			.optional(),
+		password: passwordSchema.optional(),
 		confirmPassword: passwordSchema.optional(),
 		dateCreated: z.date().optional(),
 	})
@@ -48,6 +46,14 @@ export const upsertUserServiceInputSchema = z
 				code: "custom",
 				message: NO_MATCHING_PASSWORDS_ERROR_MESSAGE,
 				path: ["confirmPassword"],
+			});
+		}
+
+		if (!data._id && !data.password?.trim()) {
+			ctx.addIssue({
+				code: "custom",
+				message: EMPTY_PASSWORD_ERROR_MESSAGE,
+				path: ["password"],
 			});
 		}
 	});
@@ -63,10 +69,10 @@ export const userSchema = z.object({
 
 export const userResponseSchema = userSchema.omit({ password: true }).extend({
 	role: roleSchema
-		.transform((role) => role.name)
+		.transform((role) => role._id)
 		.meta({
 			type: "string",
-			example: "admin",
+			example: "66b55fc95c67d15013a5f101",
 		}),
 });
 

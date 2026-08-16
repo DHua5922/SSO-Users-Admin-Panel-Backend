@@ -39,7 +39,7 @@ test("should create user", async () => {
 		_id: expect.any(String),
 		username: newUser.username,
 		email: newUser.email,
-		role: expect.any(String),
+		role: adminRoleId,
 		dateCreated: expect.any(String),
 	};
 
@@ -69,7 +69,7 @@ test("should update user", async () => {
 		_id: updatedUser._id,
 		username: updatedUser.username,
 		email: updatedUser.email,
-		role: expect.any(String),
+		role: adminRoleId,
 		dateCreated: createResponse.body.dateCreated,
 	};
 
@@ -85,7 +85,7 @@ async function deleteTestUser(userId: string) {
 		_id: userId,
 		username: expect.any(String),
 		email: expect.any(String),
-		role: expect.any(String),
+		role: adminRoleId,
 		dateCreated: expect.any(String),
 	};
 	const deleteResponse = await agent.delete(`${baseRoute}/${userId}`);

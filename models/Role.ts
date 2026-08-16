@@ -1,6 +1,6 @@
 import mongoose from "../config/database.ts";
 
-mongoose.createModel("role", {
+const Role = mongoose.createModel("role", {
 	name: {
 		type: String,
 		required: true,
@@ -10,3 +10,5 @@ mongoose.createModel("role", {
 		type: String,
 	},
 });
+
+export default Role;

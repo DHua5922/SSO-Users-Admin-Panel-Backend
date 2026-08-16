@@ -84,7 +84,7 @@ test("should create a new user successfully", async () => {
 	const { password, ...expectedResult } = {
 		...createUserResult,
 		_id: userId.toHexString(),
-		role: createUserResult.role.name,
+		role: roleId.toHexString(),
 	};
 
 	mockUpsertUser(createUserResult);
@@ -112,7 +112,7 @@ test("should update an existing user successfully", async () => {
 	const expectedUpdateUserServiceResult = {
 		...updateUserResult,
 		_id: userId.toHexString(),
-		role: populatedRole.name,
+		role: roleId.toHexString(),
 	};
 
 	mockUpsertUser(updateUserResult);

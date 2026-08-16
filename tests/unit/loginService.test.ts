@@ -75,7 +75,7 @@ test("should return user and token information when login is successful", async 
 		user: {
 			...userWithoutPassword,
 			_id: userWithoutPassword._id.toHexString(),
-			role: userWithoutPassword.role.name,
+			role: userWithoutPassword.role._id.toHexString(),
 		},
 		accessToken: "accessToken",
 		refreshToken: "refreshToken",
