@@ -7,18 +7,18 @@ let agent: TestAgent;
 const baseRoute = "/api/v1/roles";
 
 beforeEach(async () => {
-  agent = await createAuthenticatedAgent();
+	agent = await createAuthenticatedAgent();
 });
 
 test("should get roles", async () => {
-  const expectedSampleRole = {
-    _id: expect.any(String),
-    name: expect.any(String),
-    description: expect.any(String),
-  };
-  const response = await agent.get(baseRoute);
+	const expectedSampleRole = {
+		_id: expect.any(String),
+		name: expect.any(String),
+		description: expect.any(String),
+	};
+	const response = await agent.get(baseRoute);
 
-  expect(response.status).toBe(SUCCESS_STATUS_CODE);
-  expect(response.body.length).toBeGreaterThan(0);
-  expect(response.body[0]).toEqual(expectedSampleRole);
+	expect(response.status).toBe(SUCCESS_STATUS_CODE);
+	expect(response.body.length).toBeGreaterThan(0);
+	expect(response.body[0]).toEqual(expectedSampleRole);
 });

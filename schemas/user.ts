@@ -1,31 +1,31 @@
 import { z } from "zod";
 import {
-  EMPTY_EMAIL_ERROR_MESSAGE,
-  EMPTY_PASSWORD_ERROR_MESSAGE,
-  EMPTY_USERNAME_ERROR_MESSAGE,
-  NO_MATCHING_PASSWORDS_ERROR_MESSAGE,
+	EMPTY_EMAIL_ERROR_MESSAGE,
+	EMPTY_PASSWORD_ERROR_MESSAGE,
+	EMPTY_USERNAME_ERROR_MESSAGE,
+	NO_MATCHING_PASSWORDS_ERROR_MESSAGE,
 } from "../constants.ts";
 import { objectIdSchema } from "./mongodb.ts";
 import { roleSchema } from "./role.ts";
 
 const usernameSchema = z
-  .string()
-  .min(1, {
-    message: EMPTY_USERNAME_ERROR_MESSAGE,
-  })
-  .meta({
-    type: "string",
-    example: "john_doe",
-  });
+	.string()
+	.min(1, {
+		message: EMPTY_USERNAME_ERROR_MESSAGE,
+	})
+	.meta({
+		type: "string",
+		example: "john_doe",
+	});
 
 const passwordSchema = z.string().meta({
-  type: "string",
-  example: "password123",
+	type: "string",
+	example: "password123",
 });
 
 const objectIdStringSchema = z.string().meta({
-  type: "string",
-  example: "66b55fc95c67d15013a5f101",
+	type: "string",
+	example: "66b55fc95c67d15013a5f101",
 });
 
 export const upsertUserServiceInputSchema = z
@@ -59,25 +59,25 @@ export const upsertUserServiceInputSchema = z
 	});
 
 export const userSchema = z.object({
-  _id: objectIdSchema,
-  username: usernameSchema,
-  email: z.email(),
-  role: roleSchema,
-  password: passwordSchema,
-  dateCreated: z.date(),
+	_id: objectIdSchema,
+	username: usernameSchema,
+	email: z.email(),
+	role: roleSchema,
+	password: passwordSchema,
+	dateCreated: z.date(),
 });
 
 export const userResponseSchema = userSchema.omit({ password: true }).extend({
-  role: roleSchema
-    .transform((role) => role._id)
-    .meta({
-      type: "string",
-      example: "66b55fc95c67d15013a5f101",
-    }),
+	role: roleSchema
+		.transform((role) => role._id)
+		.meta({
+			type: "string",
+			example: "66b55fc95c67d15013a5f101",
+		}),
 });
 
 export type UpsertUserServiceInput = z.infer<
-  typeof upsertUserServiceInputSchema
+	typeof upsertUserServiceInputSchema
 >;
 
 export type User = z.infer<typeof userSchema>;
