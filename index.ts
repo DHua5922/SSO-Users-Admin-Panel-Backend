@@ -6,6 +6,7 @@ import swaggerUi from "swagger-ui-express";
 import { z } from "zod";
 import mongoose from "./config/database.ts";
 import authRouter from "./routes/auth.ts";
+import dashboardRouter from "./routes/dashboard.ts";
 import homeRouter from "./routes/home.ts";
 import meRouter from "./routes/me.ts";
 import roleRouter from "./routes/role.ts";
@@ -58,6 +59,7 @@ function runServer(app: Express) {
 	app.use(meRouter);
 	app.use(userRouter);
 	app.use(roleRouter);
+	app.use(dashboardRouter);
 
 	app.use(
 		"/docs",
