@@ -1,10 +1,12 @@
 import { Types } from "mongoose";
 import {
 	deleteUserByIdDal,
+	getUserCountDal,
 	getUserDal,
 	getUsersDal,
 	upsertUserDal,
 } from "../dal/user.ts";
+import { totalUsersSchema } from "../schemas/dashboard.ts";
 import {
 	type UpsertUserServiceInput,
 	type User,
@@ -12,6 +14,11 @@ import {
 	userResponseSchema,
 } from "../schemas/user.ts";
 import { bcrypt } from "../utilities/security.ts";
+
+export async function getTotalUserCountService() {
+	const result = await getUserCountDal({});
+	return totalUsersSchema.parse(result);
+}
 
 export function getUserByIdService(_id: User["_id"]) {
 	return getUserDal({ _id }).populate("role").exec();

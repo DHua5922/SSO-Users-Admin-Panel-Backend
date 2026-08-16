@@ -4,6 +4,10 @@ import type {
 	User as UserType,
 } from "../schemas/user.ts";
 
+export function getUserCountDal(query: Partial<UserType>) {
+	return User.countDocuments(query);
+}
+
 export function getUserDal(query: Partial<UserType>) {
 	return User.findOne(query);
 }
