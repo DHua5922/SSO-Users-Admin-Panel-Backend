@@ -19,3 +19,5 @@ export const NO_MATCHING_PASSWORDS_ERROR_MESSAGE = "No matching passwords";
 
 export const INVALID_ACCESS_TOKEN_ERROR_MESSAGE = "Invalid access token";
 export const INVALID_REFRESH_TOKEN_ERROR_MESSAGE = "Invalid refresh token";
+
+export const EMPTY_ROLE_NAME_ERROR_MESSAGE = "Name cannot be empty";

@@ -5,7 +5,7 @@ import {
 	EMPTY_USERNAME_ERROR_MESSAGE,
 	NO_MATCHING_PASSWORDS_ERROR_MESSAGE,
 } from "../constants.ts";
-import { objectIdSchema } from "./mongodb.ts";
+import { objectIdSchema, objectIdStringSchema } from "./mongodb.ts";
 import { roleSchema } from "./role.ts";
 
 const usernameSchema = z
@@ -21,11 +21,6 @@ const usernameSchema = z
 const passwordSchema = z.string().meta({
 	type: "string",
 	example: "password123",
-});
-
-const objectIdStringSchema = z.string().meta({
-	type: "string",
-	example: "66b55fc95c67d15013a5f101",
 });
 
 export const upsertUserServiceInputSchema = z

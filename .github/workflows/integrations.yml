@@ -39,4 +39,4 @@ jobs:
         env:
           TEST_LOGIN_EMAIL: ${{ secrets.TEST_LOGIN_EMAIL }}
           TEST_LOGIN_PASSWORD: ${{ secrets.TEST_LOGIN_PASSWORD }}
-        run: pnpm run test:integration
+        run: pnpm run test:integrations
