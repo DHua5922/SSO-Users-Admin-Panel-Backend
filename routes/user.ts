@@ -4,6 +4,7 @@ import {
 	getUsersController,
 	upsertUserController,
 } from "../controllers/user.ts";
+import { secureMiddleware } from "../middleware/auth.ts";
 import {
 	errorLoggingMiddleware,
 	loggingMiddleware,
@@ -36,6 +37,7 @@ route(
 		},
 	},
 	loggingMiddleware,
+	errorLoggingMiddleware(secureMiddleware),
 	errorLoggingMiddleware(getUsersController),
 );
 
@@ -68,6 +70,7 @@ route(
 		},
 	},
 	loggingMiddleware,
+	errorLoggingMiddleware(secureMiddleware),
 	errorLoggingMiddleware(upsertUserController),
 );
 
@@ -89,6 +92,7 @@ route(
 		},
 	},
 	loggingMiddleware,
+	errorLoggingMiddleware(secureMiddleware),
 	errorLoggingMiddleware(deleteUserController),
 );
 

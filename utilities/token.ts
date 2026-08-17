@@ -2,7 +2,6 @@ import { ApiError, JwtToken } from "js-ts-kit";
 import jsonwebtoken from "jsonwebtoken";
 import {
 	FORBIDDEN_STATUS_CODE,
-	INTERNAL_SERVER_ERROR_STATUS_CODE,
 	INVALID_ACCESS_TOKEN_ERROR_MESSAGE,
 	INVALID_REFRESH_TOKEN_ERROR_MESSAGE,
 	UNAUTHORIZED_ERROR_MESSAGE,
@@ -34,7 +33,7 @@ export function checkRefreshTokenType(type: string) {
 	if (type !== "refresh") {
 		throw new ApiError(
 			INVALID_REFRESH_TOKEN_ERROR_MESSAGE,
-			INTERNAL_SERVER_ERROR_STATUS_CODE,
+			UNAUTHORIZED_STATUS_CODE,
 		);
 	}
 }

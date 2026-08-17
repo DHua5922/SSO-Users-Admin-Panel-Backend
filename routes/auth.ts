@@ -4,6 +4,7 @@ import {
 	logoutController,
 	refreshTokensController,
 } from "../controllers/auth.ts";
+import { secureMiddleware } from "../middleware/auth.ts";
 import {
 	errorLoggingMiddleware,
 	loggingMiddleware,
@@ -71,6 +72,7 @@ route(
 		},
 	},
 	loggingMiddleware,
+	errorLoggingMiddleware(secureMiddleware),
 	errorLoggingMiddleware(logoutController),
 );
 

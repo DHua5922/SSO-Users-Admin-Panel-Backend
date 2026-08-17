@@ -4,6 +4,7 @@ import {
 	getRolesController,
 	upsertRoleController,
 } from "../controllers/role.ts";
+import { secureMiddleware } from "../middleware/auth.ts";
 import {
 	errorLoggingMiddleware,
 	loggingMiddleware,
@@ -33,6 +34,7 @@ route(
 		},
 	},
 	loggingMiddleware,
+	errorLoggingMiddleware(secureMiddleware),
 	errorLoggingMiddleware(getRolesController),
 );
 
@@ -65,6 +67,7 @@ route(
 		},
 	},
 	loggingMiddleware,
+	errorLoggingMiddleware(secureMiddleware),
 	errorLoggingMiddleware(upsertRoleController),
 );
 
@@ -86,6 +89,7 @@ route(
 		},
 	},
 	loggingMiddleware,
+	errorLoggingMiddleware(secureMiddleware),
 	errorLoggingMiddleware(deleteRoleController),
 );
 
