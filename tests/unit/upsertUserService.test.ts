@@ -26,12 +26,6 @@ const createUserServiceInput = {
 	confirmPassword: "password",
 };
 
-vi.mock("../../utilities/security.ts", () => ({
-	bcrypt: {
-		hashPassword: vi.fn(),
-	},
-}));
-
 vi.mock("../../dal/user.ts", () => ({
 	upsertUserDal: vi.fn(),
 }));

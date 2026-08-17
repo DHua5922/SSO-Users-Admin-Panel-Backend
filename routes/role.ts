@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { getRolesController } from "../controllers/role.ts";
+import {
+	deleteRoleController,
+	getRolesController,
+	upsertRoleController,
+} from "../controllers/role.ts";
 import {
 	errorLoggingMiddleware,
 	loggingMiddleware,
@@ -30,6 +34,59 @@ route(
 	},
 	loggingMiddleware,
 	errorLoggingMiddleware(getRolesController),
+);
+
+route(
+	{
+		path: "",
+		method: "put",
+		tags,
+		summary: "Upsert role",
+		description:
+			"Create or update a role. If you are updating a role, you must provide the role's ID in the request body; otherwise, a new role will be created.",
+		request: {
+			body: {
+				content: {
+					"application/json": {
+						schema: roleSchema,
+					},
+				},
+				required: true,
+			},
+		},
+		responses: {
+			"200": {
+				content: {
+					"application/json": {
+						schema: roleSchema,
+					},
+				},
+			},
+		},
+	},
+	loggingMiddleware,
+	errorLoggingMiddleware(upsertRoleController),
+);
+
+route(
+	{
+		path: "/:id",
+		method: "delete",
+		tags,
+		summary: "Delete role",
+		description: "Delete a role by its ID.",
+		responses: {
+			"200": {
+				content: {
+					"application/json": {
+						schema: roleSchema,
+					},
+				},
+			},
+		},
+	},
+	loggingMiddleware,
+	errorLoggingMiddleware(deleteRoleController),
 );
 
 export default router;
