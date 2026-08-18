@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { z } from "zod";
 import {
 	deleteUserByIdDal,
 	getUserCountDal,
@@ -8,8 +9,9 @@ import {
 } from "../dal/user.ts";
 import { totalUsersSchema } from "../schemas/dashboard.ts";
 import {
+	type InternalUser,
+	internalUserSchema,
 	type UpsertUserServiceInput,
-	type User,
 	upsertUserServiceInputSchema,
 	userResponseSchema,
 } from "../schemas/user.ts";
@@ -20,17 +22,19 @@ export async function getTotalUserCountService() {
 	return totalUsersSchema.parse(result);
 }
 
-export function getUserByIdService(_id: User["_id"]) {
-	return getUserDal({ _id }).populate("role").exec();
+export async function getUserByIdService(_id: InternalUser["_id"]) {
+	const result = await getUserDal({ _id }).populate("role").exec();
+	return internalUserSchema.parse(result);
 }
 
-export function getUserByEmailService(email: string) {
-	return getUserDal({ email }).populate("role").exec();
+export async function getUserByEmailService(email: string) {
+	const result = await getUserDal({ email }).populate("role").exec();
+	return internalUserSchema.parse(result);
 }
 
 export async function getAllUsersService() {
 	const list = await getUsersDal({}).populate("role").exec();
-	return list.map((user: User) => userResponseSchema.parse(user));
+	return z.array(userResponseSchema).parse(list);
 }
 
 export async function upsertUserService(
@@ -55,7 +59,7 @@ export async function upsertUserService(
 	return userResponseSchema.parse(updatedUser);
 }
 
-export async function deleteUserByIdService(_id: User["_id"]) {
+export async function deleteUserByIdService(_id: InternalUser["_id"]) {
 	const result = await deleteUserByIdDal(_id).populate("role").exec();
 	return userResponseSchema.parse(result);
 }

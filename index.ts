@@ -28,8 +28,8 @@ function checkEnvVariables() {
 		REFRESH_TOKEN_EXPIRATION: z.string(),
 		JWT_SECRET: z.string(),
 		CORS_ORIGIN: z.string(),
-		TEST_LOGIN_EMAIL: z.string().email(),
-		TEST_LOGIN_PASSWORD: z.string().min(8),
+		GUEST_LOGIN_EMAIL: z.email(),
+		GUEST_LOGIN_PASSWORD: z.string().min(8),
 	});
 
 	const envValidation = envSchema.safeParse(process.env);

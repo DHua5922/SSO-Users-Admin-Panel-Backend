@@ -1,6 +1,7 @@
 import { ApiError, JwtToken } from "js-ts-kit";
 import jsonwebtoken from "jsonwebtoken";
 import {
+	ADMIN_KEY,
 	FORBIDDEN_STATUS_CODE,
 	INVALID_ACCESS_TOKEN_ERROR_MESSAGE,
 	INVALID_REFRESH_TOKEN_ERROR_MESSAGE,
@@ -38,8 +39,11 @@ export function checkRefreshTokenType(type: string) {
 	}
 }
 
-export function checkRole(userRole: string) {
-	if (userRole !== "admin") {
-		throw new ApiError(WRONG_ROLE_ERROR_MESSAGE, FORBIDDEN_STATUS_CODE);
+export function checkRole(
+	roleKey: string,
+	errorMessage = WRONG_ROLE_ERROR_MESSAGE,
+) {
+	if (roleKey !== ADMIN_KEY) {
+		throw new ApiError(errorMessage, FORBIDDEN_STATUS_CODE);
 	}
 }

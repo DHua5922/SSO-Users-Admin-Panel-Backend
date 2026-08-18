@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { z } from "zod";
 import {
 	deleteRoleByIdDal,
 	getRoleCountDal,
@@ -6,17 +7,12 @@ import {
 	upsertRoleDal,
 } from "../dal/role.ts";
 import { totalRolesSchema } from "../schemas/dashboard.ts";
-import { objectIdSchema } from "../schemas/mongodb.ts";
 import {
 	type Role,
 	roleSchema,
 	type UpsertRoleServiceInput,
 	upsertRoleServiceInputSchema,
 } from "../schemas/role.ts";
-
-const roleResponseSchema = roleSchema.extend({
-	_id: objectIdSchema,
-});
 
 export async function getTotalRoleCountService() {
 	const result = await getRoleCountDal({});
@@ -25,7 +21,7 @@ export async function getTotalRoleCountService() {
 
 export async function getAllRolesService() {
 	const list = await getRolesDal({}).lean().exec();
-	return list.map((role: Role) => roleSchema.parse(role));
+	return z.array(roleSchema).parse(list);
 }
 
 export async function upsertRoleService(
@@ -34,13 +30,17 @@ export async function upsertRoleService(
 	const { _id: roleInputId, ...roleInput } =
 		upsertRoleServiceInputSchema.parse(roleToUpdateInput);
 	const roleId = roleInputId || new Types.ObjectId().toHexString();
+	const roleKey = roleInputId ? undefined : `custom:${roleId}`;
 
-	const updatedRole = await upsertRoleDal(roleId, roleInput).exec();
+	const updatedRole = await upsertRoleDal(roleId, {
+		...roleInput,
+		key: roleKey,
+	}).exec();
 
-	return roleResponseSchema.parse(updatedRole);
+	return roleSchema.parse(updatedRole);
 }
 
 export async function deleteRoleByIdService(_id: Role["_id"]) {
 	const result = await deleteRoleByIdDal(_id).exec();
-	return roleResponseSchema.parse(result);
+	return roleSchema.parse(result);
 }

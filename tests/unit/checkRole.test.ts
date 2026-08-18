@@ -1,4 +1,4 @@
-import { WRONG_ROLE_ERROR_MESSAGE } from "../../constants.ts";
+import { ADMIN_KEY, WRONG_ROLE_ERROR_MESSAGE } from "../../constants.ts";
 import { checkRole } from "../../utilities/token.ts";
 
 test("checkRole should throw an error if the user does not have the required role", () => {
@@ -6,5 +6,5 @@ test("checkRole should throw an error if the user does not have the required rol
 });
 
 test("checkRole should not throw an error if the user has the required role", () => {
-	expect(() => checkRole("admin")).not.toThrow();
+	expect(() => checkRole(ADMIN_KEY)).not.toThrow();
 });

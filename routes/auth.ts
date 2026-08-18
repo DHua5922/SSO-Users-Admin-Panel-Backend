@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+	guestLoginController,
 	loginController,
 	logoutController,
 	refreshTokensController,
@@ -9,7 +10,7 @@ import {
 	errorLoggingMiddleware,
 	loggingMiddleware,
 } from "../middleware/logging.ts";
-import { userResponseSchema, userSchema } from "../schemas/user.ts";
+import { passwordSchema, userResponseSchema } from "../schemas/user.ts";
 import { createDocumentedRoute } from "../utilities/docs.ts";
 
 const { router, route } = createDocumentedRoute("/api/v1/auth");
@@ -17,8 +18,8 @@ const { router, route } = createDocumentedRoute("/api/v1/auth");
 const tags = ["Authentication"];
 
 const loginRequestBodySchema = z.object({
-	email: userSchema.shape.email,
-	password: userSchema.shape.password,
+	email: z.email(),
+	password: passwordSchema,
 });
 
 route(
@@ -51,6 +52,28 @@ route(
 	},
 	loggingMiddleware,
 	errorLoggingMiddleware(loginController),
+);
+
+route(
+	{
+		path: "/login/guest",
+		method: "post",
+		tags,
+		summary: "Log in as guest",
+		description:
+			"Authenticate a user as guest admin and returns user information. The password is not included in the response. Access token and refresh token are set as http-only cookies.",
+		responses: {
+			"200": {
+				content: {
+					"application/json": {
+						schema: userResponseSchema,
+					},
+				},
+			},
+		},
+	},
+	loggingMiddleware,
+	errorLoggingMiddleware(guestLoginController),
 );
 
 route(

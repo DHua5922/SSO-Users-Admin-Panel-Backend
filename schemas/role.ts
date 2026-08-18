@@ -2,12 +2,8 @@ import { z } from "zod";
 import { EMPTY_ROLE_NAME_ERROR_MESSAGE } from "../constants.ts";
 import { objectIdSchema, objectIdStringSchema } from "./mongodb.ts";
 
-const nameSchema = z
-	.string()
-	.min(1, { message: EMPTY_ROLE_NAME_ERROR_MESSAGE });
-
 const baseRoleSchema = z.object({
-	name: nameSchema,
+	name: z.string().min(1, { message: EMPTY_ROLE_NAME_ERROR_MESSAGE }),
 	description: z.string(),
 });
 

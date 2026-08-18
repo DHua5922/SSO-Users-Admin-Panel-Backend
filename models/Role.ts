@@ -9,6 +9,12 @@ const Role = mongoose.createModel("role", {
 	description: {
 		type: String,
 	},
+	key: {
+		type: String,
+		required: true,
+		unique: true,
+		immutable: true,
+	},
 });
 
 export default Role;

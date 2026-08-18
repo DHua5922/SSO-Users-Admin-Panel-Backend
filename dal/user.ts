@@ -1,18 +1,15 @@
 import User from "../models/User.ts";
-import type {
-	UpsertUserServiceInput,
-	User as UserType,
-} from "../schemas/user.ts";
+import type { InternalUser, UpsertUserServiceInput } from "../schemas/user.ts";
 
-export function getUserCountDal(query: Partial<UserType>) {
+export function getUserCountDal(query: Partial<InternalUser>) {
 	return User.countDocuments(query);
 }
 
-export function getUserDal(query: Partial<UserType>) {
+export function getUserDal(query: Partial<InternalUser>) {
 	return User.findOne(query);
 }
 
-export function getUsersDal(query: Partial<UserType>) {
+export function getUsersDal(query: Partial<InternalUser>) {
 	return User.find(query);
 }
 
@@ -27,6 +24,6 @@ export function upsertUserDal(
 	});
 }
 
-export function deleteUserByIdDal(id: UserType["_id"]) {
+export function deleteUserByIdDal(id: InternalUser["_id"]) {
 	return User.findByIdAndDelete(id);
 }

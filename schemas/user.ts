@@ -18,7 +18,7 @@ const usernameSchema = z
 		example: "john_doe",
 	});
 
-const passwordSchema = z.string().meta({
+export const passwordSchema = z.string().meta({
 	type: "string",
 	example: "password123",
 });
@@ -53,26 +53,25 @@ export const upsertUserServiceInputSchema = z
 		}
 	});
 
-export const userSchema = z.object({
+export const internalUserSchema = z.object({
 	_id: objectIdSchema,
 	username: usernameSchema,
 	email: z.email(),
-	role: roleSchema,
+	role: roleSchema.extend({
+		key: z.string(),
+	}),
 	password: passwordSchema,
 	dateCreated: z.date(),
 });
 
-export const userResponseSchema = userSchema.omit({ password: true }).extend({
-	role: roleSchema
-		.transform((role) => role._id)
-		.meta({
-			type: "string",
-			example: "66b55fc95c67d15013a5f101",
-		}),
-});
+export const userResponseSchema = internalUserSchema
+	.omit({ password: true })
+	.extend({
+		role: roleSchema.transform((role) => role._id).pipe(objectIdStringSchema),
+	});
 
 export type UpsertUserServiceInput = z.infer<
 	typeof upsertUserServiceInputSchema
 >;
 
-export type User = z.infer<typeof userSchema>;
+export type InternalUser = z.infer<typeof internalUserSchema>;

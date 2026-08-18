@@ -14,7 +14,7 @@ export function getRolesDal(query: Partial<RoleType>) {
 
 export function upsertRoleDal(
 	id: UpsertRoleServiceInput["_id"],
-	update: Partial<UpsertRoleServiceInput>,
+	update: Partial<UpsertRoleServiceInput> & { key?: string },
 ) {
 	return Role.findByIdAndUpdate(id, update, {
 		upsert: true,
