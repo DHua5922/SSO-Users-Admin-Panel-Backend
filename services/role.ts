@@ -29,7 +29,7 @@ export async function upsertRoleService(
 ) {
 	const { _id: roleInputId, ...roleInput } =
 		upsertRoleServiceInputSchema.parse(roleToUpdateInput);
-	const roleId = roleInputId || new Types.ObjectId().toHexString();
+	const roleId = roleInputId ?? new Types.ObjectId().toHexString();
 	const roleKey = roleInputId ? undefined : `custom:${roleId}`;
 
 	const updatedRole = await upsertRoleDal(roleId, {

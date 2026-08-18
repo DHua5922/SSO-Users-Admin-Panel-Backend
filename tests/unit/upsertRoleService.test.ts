@@ -7,6 +7,7 @@ import { upsertRoleService } from "../../services/role.ts";
 const roleId = new Types.ObjectId();
 
 const createRoleServiceInput = {
+	_id: "",
 	name: "test role",
 	description: "test role description",
 };

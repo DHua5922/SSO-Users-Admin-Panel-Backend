@@ -9,6 +9,12 @@ export const objectIdStringSchema = z
 		example: "66b55fc95c67d15013a5f101",
 	});
 
+export const optionalObjectIdStringSchema = z.preprocess(
+	(value) =>
+		typeof value === "string" && value.trim() === "" ? undefined : value,
+	objectIdStringSchema.optional(),
+);
+
 export const objectIdSchema = z.preprocess(
 	(id) => (id instanceof Types.ObjectId ? id.toHexString() : id),
 	objectIdStringSchema,

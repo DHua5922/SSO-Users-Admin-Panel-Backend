@@ -19,6 +19,7 @@ const populatedRole = {
 const dateCreated = new Date();
 
 const createUserServiceInput = {
+	_id: "",
 	username: "testuser",
 	email: "testUser@email.com",
 	role: roleId.toHexString(),
