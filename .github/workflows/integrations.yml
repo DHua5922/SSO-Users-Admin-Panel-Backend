@@ -37,6 +37,6 @@ jobs:
 
       - name: Run Integration Tests
         env:
-          TEST_LOGIN_EMAIL: ${{ secrets.TEST_LOGIN_EMAIL }}
-          TEST_LOGIN_PASSWORD: ${{ secrets.TEST_LOGIN_PASSWORD }}
+          GUEST_LOGIN_EMAIL: ${{ secrets.GUEST_LOGIN_EMAIL }}
+          GUEST_LOGIN_PASSWORD: ${{ secrets.GUEST_LOGIN_PASSWORD }}
         run: pnpm run test:integrations

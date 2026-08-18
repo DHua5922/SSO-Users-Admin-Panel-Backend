@@ -1,6 +1,10 @@
 import { Types } from "mongoose";
 import type { Mock } from "vitest";
-import { WRONG_PASSWORD_ERROR_MESSAGE } from "../../constants.ts";
+import {
+	ADMIN_KEY,
+	NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE,
+	WRONG_PASSWORD_ERROR_MESSAGE,
+} from "../../constants.ts";
 import { loginService } from "../../services/auth.ts";
 import { getUserByEmailService } from "../../services/user.ts";
 import { bcrypt } from "../../utilities/security.ts";
@@ -16,11 +20,17 @@ vi.mock("../../utilities/security.ts", () => ({
 	},
 }));
 
-vi.mock("../../utilities/token.ts", () => ({
-	jwtToken: {
-		create: vi.fn(),
-	},
-}));
+vi.mock("../../utilities/token.ts", async (importOriginal) => {
+	const actual =
+		await importOriginal<typeof import("../../utilities/token.ts")>();
+
+	return {
+		...actual,
+		jwtToken: {
+			create: vi.fn(),
+		},
+	};
+});
 
 const testUser = {
 	_id: new Types.ObjectId("507f1f77bcf86cd799439011"),
@@ -30,6 +40,7 @@ const testUser = {
 		_id: new Types.ObjectId("507f1f77bcf86cd799439012"),
 		name: "admin",
 		description: "Administrator role",
+		key: ADMIN_KEY,
 	},
 	password: "$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQ8Z/5a6m0j0Z5F5F5F5G",
 	dateCreated: new Date(),
@@ -53,6 +64,27 @@ test("should throw invalid password error message when password is incorrect", a
 
 	const value = loginService(testUser.email, "wrongPassword");
 	await expect(value).rejects.toThrow(WRONG_PASSWORD_ERROR_MESSAGE);
+});
+
+test("should throw error when non-admin user is trying to log in", async () => {
+	const nonAdminUser = {
+		...testUser,
+		role: {
+			_id: new Types.ObjectId("507f1f77bcf86cd799439013"),
+			name: "user",
+			description: "Regular user role",
+			key: "user",
+		},
+	};
+
+	const getUserByEmailServiceMock = getUserByEmailService as Mock;
+	const bcryptMock = bcrypt.isMatchingPassword as Mock;
+
+	getUserByEmailServiceMock.mockResolvedValueOnce(nonAdminUser);
+	bcryptMock.mockResolvedValueOnce(true);
+
+	const value = loginService(testUser.email, "correctPassword");
+	await expect(value).rejects.toThrow(NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE);
 });
 
 test("should return user and token information when login is successful", async () => {

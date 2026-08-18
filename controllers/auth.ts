@@ -22,6 +22,29 @@ export async function loginController(req: Request, res: Response) {
 	res.status(SUCCESS_STATUS_CODE).json(user);
 }
 
+export async function guestLoginController(_req: Request, res: Response) {
+	const {
+		user,
+		accessToken,
+		refreshToken,
+		cookieAccessTokenExpireTime,
+		cookieRefreshTokenExpireTime,
+	} = await loginService(
+		process.env.GUEST_LOGIN_EMAIL || "",
+		process.env.GUEST_LOGIN_PASSWORD || "",
+	);
+
+	setCookies(
+		res,
+		accessToken,
+		refreshToken,
+		cookieAccessTokenExpireTime,
+		cookieRefreshTokenExpireTime,
+	);
+
+	res.status(SUCCESS_STATUS_CODE).json(user);
+}
+
 export async function logoutController(_req: Request, res: Response) {
 	const expiredDate = new Date(0);
 	setCookies(res, "", "", expiredDate, expiredDate);

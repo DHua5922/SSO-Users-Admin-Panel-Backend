@@ -22,7 +22,7 @@ export async function secureMiddleware(
 	checkAccessTokenType(tokenPayload?.type);
 
 	const user = await getUserByIdService(tokenPayload?.userId);
-	checkRole(user.role.name);
+	checkRole(user.role.key);
 	req.user = user;
 
 	next();

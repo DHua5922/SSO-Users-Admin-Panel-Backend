@@ -1,11 +1,16 @@
 import { ApiError, cookieExpireTime } from "js-ts-kit";
 import {
 	BAD_REQUEST_STATUS_CODE,
+	NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE,
 	WRONG_PASSWORD_ERROR_MESSAGE,
 } from "../constants.ts";
 import { userResponseSchema } from "../schemas/user.ts";
 import { bcrypt } from "../utilities/security.ts";
-import { checkRefreshTokenType, jwtToken } from "../utilities/token.ts";
+import {
+	checkRefreshTokenType,
+	checkRole,
+	jwtToken,
+} from "../utilities/token.ts";
 import { getUserByEmailService } from "./user.ts";
 
 export async function loginService(email: string, passwordInput: string) {
@@ -21,6 +26,8 @@ export async function loginService(email: string, passwordInput: string) {
 	if (!isMatchingPassword) {
 		throw new ApiError(WRONG_PASSWORD_ERROR_MESSAGE, BAD_REQUEST_STATUS_CODE);
 	}
+
+	checkRole(user.role.key, NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE);
 
 	return {
 		user: userResponseSchema.parse(user),

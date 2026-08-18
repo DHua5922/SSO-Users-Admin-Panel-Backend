@@ -15,7 +15,7 @@ test("should give authenticated user", async () => {
 	expect(response.body).toEqual({
 		_id: expect.any(String),
 		username: expect.any(String),
-		email: process.env.TEST_LOGIN_EMAIL,
+		email: process.env.GUEST_LOGIN_EMAIL,
 		role: expect.any(String),
 		dateCreated: expect.any(String),
 	});
