@@ -47,7 +47,7 @@ export async function upsertUserService(
 		...userInput
 	} = upsertUserServiceInputSchema.parse(userToUpdateInput);
 
-	const userId = userInputId || new Types.ObjectId().toHexString();
+	const userId = userInputId ?? new Types.ObjectId().toHexString();
 
 	const updatedUser = await upsertUserDal(userId, {
 		...userInput,

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { EMPTY_ROLE_NAME_ERROR_MESSAGE } from "../constants.ts";
-import { objectIdSchema, objectIdStringSchema } from "./mongodb.ts";
+import { objectIdSchema, optionalObjectIdStringSchema } from "./mongodb.ts";
 
 const baseRoleSchema = z.object({
 	name: z.string().min(1, { message: EMPTY_ROLE_NAME_ERROR_MESSAGE }),
@@ -12,7 +12,7 @@ export const roleSchema = baseRoleSchema.extend({
 });
 
 export const upsertRoleServiceInputSchema = baseRoleSchema.extend({
-	_id: objectIdStringSchema.optional(),
+	_id: optionalObjectIdStringSchema,
 });
 
 export type UpsertRoleServiceInput = z.infer<
