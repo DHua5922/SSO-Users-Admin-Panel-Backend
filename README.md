@@ -117,7 +117,7 @@ The API defaults to `http://localhost:8080`.
 | `REFRESH_TOKEN_NAME` | Refresh-token cookie name | `refreshToken` |
 | `REFRESH_TOKEN_EXPIRATION` | Refresh-token lifetime | `7d` |
 | `CORS_ORIGIN` | Exact frontend origin allowed by CORS | `http://localhost:5173` |
-| `GUEST_LOGIN_EMAIL` | Existing portfolio guest administrator | `guest@example.com` |
+| `GUEST_LOGIN_EMAIL` | Existing portfolio guest administrator | `guestAdmin@example.com` |
 | `GUEST_LOGIN_PASSWORD` | Guest password; at least eight characters | Use a non-sensitive demo password |
 | `PORT` | Optional local HTTP port | `8080` |
 
