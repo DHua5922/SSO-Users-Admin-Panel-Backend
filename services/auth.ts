@@ -1,8 +1,8 @@
 import { ApiError, cookieExpireTime } from "js-ts-kit";
 import {
 	BAD_REQUEST_STATUS_CODE,
+	INVALID_LOGIN_CREDENTIALS_ERROR_MESSAGE,
 	NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE,
-	WRONG_PASSWORD_ERROR_MESSAGE,
 } from "../constants.ts";
 import { userResponseSchema } from "../schemas/user.ts";
 import { bcrypt } from "../utilities/security.ts";
@@ -17,7 +17,10 @@ import { getUserByEmailService } from "./user.ts";
 export async function loginService(email: string, passwordInput: string) {
 	const user = await getUserByEmailService(email);
 	if (!user) {
-		throw new ApiError("Invalid email", BAD_REQUEST_STATUS_CODE);
+		throw new ApiError(
+			INVALID_LOGIN_CREDENTIALS_ERROR_MESSAGE,
+			BAD_REQUEST_STATUS_CODE,
+		);
 	}
 
 	const isMatchingPassword = await bcrypt.isMatchingPassword(
@@ -25,7 +28,10 @@ export async function loginService(email: string, passwordInput: string) {
 		passwordInput,
 	);
 	if (!isMatchingPassword) {
-		throw new ApiError(WRONG_PASSWORD_ERROR_MESSAGE, BAD_REQUEST_STATUS_CODE);
+		throw new ApiError(
+			INVALID_LOGIN_CREDENTIALS_ERROR_MESSAGE,
+			BAD_REQUEST_STATUS_CODE,
+		);
 	}
 
 	requireAdminRole(user.role.key, NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE);

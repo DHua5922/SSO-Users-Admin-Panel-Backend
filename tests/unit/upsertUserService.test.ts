@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import type { Mock } from "vitest";
+import { z } from "zod";
 import {
 	EMPTY_EMAIL_ERROR_MESSAGE,
 	EMPTY_PASSWORD_ERROR_MESSAGE,
@@ -32,39 +33,39 @@ vi.mock("../../dal/user.ts", () => ({
 }));
 
 test("should throw error if username is empty", async () => {
-	await expect(
-		upsertUserService({
-			...createUserServiceInput,
-			username: "",
-		}),
-	).rejects.toThrow(EMPTY_USERNAME_ERROR_MESSAGE);
+	const value = upsertUserService({
+		...createUserServiceInput,
+		username: "",
+	});
+	await expect(value).rejects.toBeInstanceOf(z.ZodError);
+	await expect(value).rejects.toThrow(EMPTY_USERNAME_ERROR_MESSAGE);
 });
 
 test("should throw error if email is empty", async () => {
-	await expect(
-		upsertUserService({
-			...createUserServiceInput,
-			email: "",
-		}),
-	).rejects.toThrow(EMPTY_EMAIL_ERROR_MESSAGE);
+	const value = upsertUserService({
+		...createUserServiceInput,
+		email: "",
+	});
+	await expect(value).rejects.toBeInstanceOf(z.ZodError);
+	await expect(value).rejects.toThrow(EMPTY_EMAIL_ERROR_MESSAGE);
 });
 
 test("should throw an error if password is empty for new user", async () => {
-	await expect(
-		upsertUserService({
-			...createUserServiceInput,
-			password: "",
-		}),
-	).rejects.toThrow(EMPTY_PASSWORD_ERROR_MESSAGE);
+	const value = upsertUserService({
+		...createUserServiceInput,
+		password: "",
+	});
+	await expect(value).rejects.toBeInstanceOf(z.ZodError);
+	await expect(value).rejects.toThrow(EMPTY_PASSWORD_ERROR_MESSAGE);
 });
 
 test("should throw an error if passwords do not match", async () => {
-	await expect(
-		upsertUserService({
-			...createUserServiceInput,
-			confirmPassword: `${createUserServiceInput.password}1`,
-		}),
-	).rejects.toThrow(NO_MATCHING_PASSWORDS_ERROR_MESSAGE);
+	const value = upsertUserService({
+		...createUserServiceInput,
+		confirmPassword: `${createUserServiceInput.password}1`,
+	});
+	await expect(value).rejects.toBeInstanceOf(z.ZodError);
+	await expect(value).rejects.toThrow(NO_MATCHING_PASSWORDS_ERROR_MESSAGE);
 });
 
 test("should create a new user successfully", async () => {

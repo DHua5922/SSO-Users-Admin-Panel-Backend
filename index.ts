@@ -4,6 +4,8 @@ import cors from "cors";
 import express, { type Express } from "express";
 import { z } from "zod";
 import mongoose from "./config/database.ts";
+import { REQUEST_ID_HEADER } from "./constants.ts";
+import { requestIdMiddleware } from "./middleware/requestId.ts";
 import authRouter from "./routes/auth.ts";
 import dashboardRouter from "./routes/dashboard.ts";
 import docsRouter from "./routes/docs.ts";
@@ -18,7 +20,10 @@ mongoose.connectToMongoDb();
 const app: Express = express();
 configureApp(app);
 
-if (process.env.NODE_ENV !== "test" && !process.env.VERCEL) {
+const shouldStartLocalServer =
+	process.env.NODE_ENV !== "test" && process.env.VERCEL !== "1";
+
+if (shouldStartLocalServer) {
 	const port = process.env.PORT || 8080;
 	app.listen(port, () => {
 		console.log(`Server is running on port ${port}`);
@@ -51,12 +56,14 @@ function checkEnvVariables() {
 }
 
 function configureApp(app: Express) {
+	app.use(requestIdMiddleware);
 	app.use(express.json());
 	app.use(
 		cors({
 			origin: process.env.CORS_ORIGIN,
 			credentials: true,
 			allowedHeaders: ["Content-Type", "Authorization"],
+			exposedHeaders: [REQUEST_ID_HEADER],
 			methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 		}),
 	);

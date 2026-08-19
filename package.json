@@ -1,11 +1,11 @@
 {
 	"name": "SSO-Users-Admin-Panel-Backend",
 	"version": "1.0.0",
-	"description": "",
+	"description": "REST API for a user and role administration panel",
 	"main": "index.ts",
 	"packageManager": "pnpm@11.20.0",
 	"scripts": {
-		"dev": "nodemon --watch './**/*.ts' --exec node index.ts",
+		"dev": "cross-env NODE_ENV=development nodemon --watch './**/*.ts' --exec node index.ts",
 		"quality:check": "pnpm biome:check && pnpm check:unused && pnpm typescript:check",
 		"biome:check": "pnpx @biomejs/biome check",
 		"biome:fix": "pnpm biome:check --write",
@@ -14,8 +14,14 @@
 		"test:unit": "vitest run tests/unit --coverage",
 		"test:integrations": "cross-env NODE_ENV=test TEST_TYPE=integration vitest run tests/integrations --coverage"
 	},
-	"keywords": [],
-	"author": "",
+	"keywords": [
+		"express",
+		"mongodb",
+		"typescript",
+		"zod",
+		"openapi"
+	],
+	"author": "Dylan Hua",
 	"license": "ISC",
 	"devEngines": {
 		"packageManager": {
