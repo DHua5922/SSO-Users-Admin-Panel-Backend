@@ -78,20 +78,21 @@ function setCookies(
 	cookieAccessTokenExpireTime: Date,
 	cookieRefreshTokenExpireTime: Date,
 ) {
+	const isProduction = process.env.NODE_ENV === "production";
 	const standardCookieOptions = {
 		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
+		secure: isProduction,
 	};
 
 	res
 		.cookie(process.env.ACCESS_TOKEN_NAME || "", accessToken, {
 			...standardCookieOptions,
-			sameSite: "lax",
+			sameSite: isProduction ? "none" : "lax",
 			expires: cookieAccessTokenExpireTime,
 		})
 		.cookie(process.env.REFRESH_TOKEN_NAME || "", refreshToken, {
 			...standardCookieOptions,
-			sameSite: "strict",
+			sameSite: isProduction ? "none" : "strict",
 			expires: cookieRefreshTokenExpireTime,
 		});
 }
