@@ -1,7 +1,7 @@
 {
 	"name": "SSO-Users-Admin-Panel-Backend",
 	"version": "1.0.0",
-	"description": "",
+	"description": "REST API for a user and role administration panel",
 	"main": "index.ts",
 	"packageManager": "pnpm@11.20.0",
 	"scripts": {
@@ -14,8 +14,14 @@
 		"test:unit": "vitest run tests/unit --coverage",
 		"test:integrations": "cross-env NODE_ENV=test TEST_TYPE=integration vitest run tests/integrations --coverage"
 	},
-	"keywords": [],
-	"author": "",
+	"keywords": [
+		"express",
+		"mongodb",
+		"typescript",
+		"zod",
+		"openapi"
+	],
+	"author": "Dylan Hua",
 	"license": "ISC",
 	"devEngines": {
 		"packageManager": {
