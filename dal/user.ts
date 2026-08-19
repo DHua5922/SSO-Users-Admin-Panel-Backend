@@ -25,5 +25,8 @@ export function upsertUserDal(
 }
 
 export function deleteUserByIdDal(id: InternalUser["_id"]) {
-	return User.findByIdAndDelete(id);
+	return User.findOneAndDelete({
+		_id: id,
+		systemManaged: { $ne: true },
+	});
 }

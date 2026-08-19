@@ -9,6 +9,7 @@ const baseRoleSchema = z.object({
 
 export const roleSchema = baseRoleSchema.extend({
 	_id: objectIdSchema,
+	systemManaged: z.boolean().optional(),
 });
 
 export const upsertRoleServiceInputSchema = baseRoleSchema.extend({

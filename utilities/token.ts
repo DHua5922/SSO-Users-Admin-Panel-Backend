@@ -15,13 +15,15 @@ export const jwtToken = new JwtToken(
 	process.env.JWT_SECRET || "",
 );
 
-export function checkToken(token: string) {
+export function requireToken(
+	token: string | undefined,
+): asserts token is string {
 	if (!token) {
 		throw new ApiError(UNAUTHORIZED_ERROR_MESSAGE, UNAUTHORIZED_STATUS_CODE);
 	}
 }
 
-export function checkAccessTokenType(type: string) {
+export function requireAccessTokenType(type: string) {
 	if (type !== "access") {
 		throw new ApiError(
 			INVALID_ACCESS_TOKEN_ERROR_MESSAGE,
@@ -30,7 +32,7 @@ export function checkAccessTokenType(type: string) {
 	}
 }
 
-export function checkRefreshTokenType(type: string) {
+export function requireRefreshTokenType(type: string) {
 	if (type !== "refresh") {
 		throw new ApiError(
 			INVALID_REFRESH_TOKEN_ERROR_MESSAGE,
@@ -39,7 +41,7 @@ export function checkRefreshTokenType(type: string) {
 	}
 }
 
-export function checkRole(
+export function requireAdminRole(
 	roleKey: string,
 	errorMessage = WRONG_ROLE_ERROR_MESSAGE,
 ) {
