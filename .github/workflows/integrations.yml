@@ -37,6 +37,13 @@ jobs:
 
       - name: Run Integration Tests
         env:
+          MONGO_URI: ${{ secrets.MONGO_TEST_URI }}
+          JWT_SECRET: ${{ secrets.JWT_TEST_SECRET }}
           GUEST_LOGIN_EMAIL: ${{ secrets.GUEST_LOGIN_EMAIL }}
           GUEST_LOGIN_PASSWORD: ${{ secrets.GUEST_LOGIN_PASSWORD }}
+          ACCESS_TOKEN_NAME: accessToken
+          ACCESS_TOKEN_EXPIRATION: 15m
+          REFRESH_TOKEN_NAME: refreshToken
+          REFRESH_TOKEN_EXPIRATION: 7d
+          CORS_ORIGIN: http://localhost:3000
         run: pnpm run test:integrations
