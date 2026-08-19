@@ -35,7 +35,6 @@
 		"js-ts-kit": "^1.1.0",
 		"jsonwebtoken": "^9.0.3",
 		"mongoose": "^9.9.1",
-		"swagger-ui-express": "^5.0.1",
 		"zod": "^4.4.3"
 	},
 	"devDependencies": {
@@ -47,7 +46,6 @@
 		"@types/jsonwebtoken": "^9.0.10",
 		"@types/node": "^26.1.2",
 		"@types/supertest": "^7.2.1",
-		"@types/swagger-ui-express": "^4.1.8",
 		"@vitest/coverage-v8": "4.1.10",
 		"cross-env": "^10.1.0",
 		"knip": "^6.31.0",
