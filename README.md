@@ -1,6 +1,6 @@
 # User Administration API
 
-The backend for a portfolio administration panel that manages users and roles. It exposes a documented REST API, authenticates administrators with short-lived JWT access tokens and rotating refresh tokens, and stores data in MongoDB.
+The backend for a portfolio administration panel that manages users and roles. It exposes a documented REST API, authenticates administrators with JWT access and refresh tokens, and stores data in MongoDB.
 
 > Despite the repository's original SSO name, this service does not implement an identity provider or an OAuth/OIDC single sign-on flow. It is the administration API for the project and currently uses email/password authentication.
 
@@ -49,13 +49,15 @@ The backend for a portfolio administration panel that manages users and roles. I
 
 ## Architecture
 
-Requests move through small layers with distinct responsibilities:
+Most API requests move through small layers with distinct responsibilities:
 
 ```text
-route -> middleware -> controller -> service -> DAL -> MongoDB
+route -> middleware -> controller -> service -> DAL -> model -> MongoDB
                               |
-                              -> Zod validation
+                              -> composite service -> services
 ```
+
+Zod schemas validate service inputs, database results, composed results, and public response shapes. Authentication middleware may call a service before the controller to resolve and authorize the current user. The home and documentation routes are intentionally simpler and respond directly from their controllers.
 
 - `routes/` defines endpoints, middleware order, and OpenAPI metadata.
 - `controllers/` translates HTTP requests and responses.
@@ -64,7 +66,7 @@ route -> middleware -> controller -> service -> DAL -> MongoDB
 - `dal/` contains database queries.
 - `models/` defines MongoDB persistence models.
 - `schemas/` defines runtime validation and public response shapes.
-- `middleware/` handles authentication, authorization, errors, and redacted request logging.
+- `middleware/` handles request IDs, authentication, authorization, errors, and request logging.
 - `utilities/` contains reusable token, password, and documentation support.
 
 ## Security decisions
@@ -74,7 +76,7 @@ route -> middleware -> controller -> service -> DAL -> MongoDB
 - Protected routes resolve the current user from the database and require the immutable `admin` role key.
 - The public guest login authenticates an existing guest-administrator account without exposing its credentials to the frontend.
 - Required users and roles use an immutable `systemManaged` flag and cannot be deleted through their delete endpoints.
-- CORS accepts only the configured frontend origin.
+- Browser cross-origin access is limited to the configured frontend origin.
 
 This is intentionally a portfolio application rather than a complete identity platform. Refresh-token revocation, distributed rate limiting, audit-log persistence, and OAuth/OIDC federation would be appropriate next steps for a larger production system.
 
@@ -94,7 +96,7 @@ This is intentionally a portfolio application rather than a complete identity pl
 
 2. Create a `.env` file using the variables documented below and replace every placeholder.
 
-3. Ensure the database contains a role whose immutable key is `admin`, plus the administrator referenced by `GUEST_LOGIN_EMAIL` if guest login is enabled.
+3. Ensure the database contains a role whose immutable key is `admin`, plus the administrator referenced by `GUEST_LOGIN_EMAIL`.
 
 4. Start the development server:
 
@@ -109,14 +111,17 @@ The API defaults to `http://localhost:8080`.
 | Variable | Purpose | Example |
 | --- | --- | --- |
 | `MONGO_URI` | MongoDB connection string | `mongodb://127.0.0.1:27017/users_dev` |
-| `JWT_SECRET` | Token signing secret; at least 32 characters | Generate a random value |
+| `JWT_SECRET` | Token-signing secret | Generate a strong random value |
 | `ACCESS_TOKEN_NAME` | Access-token cookie name | `accessToken` |
 | `ACCESS_TOKEN_EXPIRATION` | Access-token lifetime | `15m` |
 | `REFRESH_TOKEN_NAME` | Refresh-token cookie name | `refreshToken` |
 | `REFRESH_TOKEN_EXPIRATION` | Refresh-token lifetime | `7d` |
-| `CORS_ORIGIN` | Exact frontend origin allowed by CORS | `http://localhost:3000` |
+| `CORS_ORIGIN` | Exact frontend origin allowed by CORS | `http://localhost:5173` |
 | `GUEST_LOGIN_EMAIL` | Existing portfolio guest administrator | `guest@example.com` |
 | `GUEST_LOGIN_PASSWORD` | Guest password; at least eight characters | Use a non-sensitive demo password |
+| `PORT` | Optional local HTTP port | `8080` |
+
+The development and integration-test scripts set `NODE_ENV` automatically. Vercel supplies its own platform environment variables, including `VERCEL`.
 
 Never commit `.env` files or production credentials.
 
@@ -131,7 +136,7 @@ With the API running:
 
 Swagger UI browser assets are loaded from a pinned CDN release. The OpenAPI document itself is generated and served by this application, avoiding reliance on package static files inside a serverless deployment.
 
-Every response includes a server-generated UUID in the `X-Request-ID` header. The same value is included in request and error logs so a client-visible response can be correlated with its server-side activity.
+Every response includes a server-generated UUID in the `X-Request-ID` header. Logged API routes include the same value in their request and error logs so a client-visible response can be correlated with its server-side activity.
 
 ## Main endpoints
 
@@ -139,18 +144,18 @@ Every response includes a server-generated UUID in the `X-Request-ID` header. Th
 | --- | --- | --- | --- |
 | `POST` | `/api/v1/auth/login` | Public | Administrator login |
 | `POST` | `/api/v1/auth/login/guest` | Public | Portfolio guest login |
-| `POST` | `/api/v1/auth/tokens/new` | Refresh cookie | Rotate tokens |
+| `POST` | `/api/v1/auth/tokens/new` | Refresh cookie | Reissue access and refresh tokens |
 | `POST` | `/api/v1/auth/logout` | Administrator | Clear authentication cookies |
-| `GET` | `/api/v1/me/` | Administrator | Return the current user |
+| `GET` | `/api/v1/me` | Administrator | Return the current user |
 | `GET` | `/api/v1/users` | Administrator | List users |
 | `PUT` | `/api/v1/users` | Administrator | Create or update a user |
-| `DELETE` | `/api/v1/users/:id` | Administrator | Delete a non-system user |
+| `DELETE` | `/api/v1/users/:id` | Administrator | Delete a non-system-managed user |
 | `GET` | `/api/v1/roles` | Administrator | List roles |
 | `PUT` | `/api/v1/roles` | Administrator | Create or update a role |
-| `DELETE` | `/api/v1/roles/:id` | Administrator | Delete a non-system role |
+| `DELETE` | `/api/v1/roles/:id` | Administrator | Delete a non-system-managed role |
 | `GET` | `/api/v1/dashboard/stats` | Administrator | Return dashboard totals |
 
-The interactive documentation is the source of truth for request and response schemas.
+The interactive documentation describes the registered API paths and their documented request and response schemas. Runtime validation is performed separately by the service and schema layers.
 
 ## Quality and tests
 
@@ -160,13 +165,13 @@ pnpm test:unit           # isolated service and utility tests
 pnpm test:integrations   # HTTP tests against the configured test database
 ```
 
-Integration tests create temporary records and remove them afterward. Use a dedicated test database; never point automated integration workflows at production.
+The user and role CRUD integration tests remove the temporary records they create when their test flows complete successfully. Use a dedicated test database; never point automated integration workflows at production.
 
 GitHub Actions runs quality checks and unit tests on every push. A scheduled workflow runs integration tests using repository secrets and a separate MongoDB test connection.
 
 ## Deployment
 
-The Express application exports the configured app without opening a listener when running on Vercel. Configure all environment variables in the Vercel project and use the production frontend URL for `CORS_ORIGIN`.
+The Express application exports the configured app without opening a listener when running on Vercel. Configure the required application environment variables in the Vercel project and use the production frontend URL for `CORS_ORIGIN`; the local `PORT` variable is not needed there.
 
 After deployment, verify `/`, `/openapi.json`, and `/docs`, then test authentication and the protected API routes.
 
