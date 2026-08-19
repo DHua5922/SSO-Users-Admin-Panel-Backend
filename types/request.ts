@@ -4,3 +4,7 @@ import type { InternalUser } from "../schemas/user.ts";
 export interface RequestWithUser extends Request {
 	user?: InternalUser;
 }
+
+export interface RequestWithRequestId extends Request {
+	requestId: string;
+}

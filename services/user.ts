@@ -34,7 +34,7 @@ export async function getUserByIdService(_id: InternalUser["_id"]) {
 
 export async function getUserByEmailService(email: string) {
 	const result = await getUserDal({ email }).populate("role").exec();
-	return internalUserSchema.parse(result);
+	return internalUserSchema.nullable().parse(result);
 }
 
 export async function getAllUsersService() {

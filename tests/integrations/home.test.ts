@@ -7,4 +7,7 @@ test("should give message", async () => {
 
 	expect(response.status).toBe(SUCCESS_STATUS_CODE);
 	expect(response.text).toEqual(HOME_RESPONSE_MESSAGE);
+	expect(response.headers["x-request-id"]).toMatch(
+		/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+	);
 });

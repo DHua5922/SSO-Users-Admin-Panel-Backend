@@ -7,6 +7,7 @@ The backend for a portfolio administration panel that manages users and roles. I
 ## Table of contents
 
 - [Highlights](#highlights)
+- [Tech stack](#tech-stack)
 - [Architecture](#architecture)
 - [Security decisions](#security-decisions)
 - [Requirements](#requirements)
@@ -31,6 +32,20 @@ The backend for a portfolio administration panel that manages users and roles. I
 - Protection against deleting system-managed users and roles
 - Unit and integration tests with Vitest and Supertest
 - GitHub Actions automation and Vercel serverless support
+
+## Tech stack
+
+| Area | Technologies |
+| --- | --- |
+| Runtime and language | Node.js 24, TypeScript, ES modules |
+| API framework | Express 5 |
+| Database and modeling | MongoDB, Mongoose |
+| Validation and documentation | Zod, OpenAPI 3, Swagger UI, `@asteasolutions/zod-to-openapi` |
+| Authentication and security | JSON Web Tokens, bcrypt, HTTP-only cookies, CORS |
+| Testing | Vitest, Supertest, V8 coverage |
+| Code quality | Biome, TypeScript compiler, Knip |
+| Development and package management | pnpm, Nodemon |
+| Deployment and automation | Vercel, GitHub Actions |
 
 ## Architecture
 
@@ -115,6 +130,8 @@ With the API running:
 - OpenAPI JSON: [`http://localhost:8080/openapi.json`](http://localhost:8080/openapi.json)
 
 Swagger UI browser assets are loaded from a pinned CDN release. The OpenAPI document itself is generated and served by this application, avoiding reliance on package static files inside a serverless deployment.
+
+Every response includes a server-generated UUID in the `X-Request-ID` header. The same value is included in request and error logs so a client-visible response can be correlated with its server-side activity.
 
 ## Main endpoints
 

@@ -5,7 +5,7 @@
 	"main": "index.ts",
 	"packageManager": "pnpm@11.20.0",
 	"scripts": {
-		"dev": "nodemon --watch './**/*.ts' --exec node index.ts",
+		"dev": "cross-env NODE_ENV=development nodemon --watch './**/*.ts' --exec node index.ts",
 		"quality:check": "pnpm biome:check && pnpm check:unused && pnpm typescript:check",
 		"biome:check": "pnpx @biomejs/biome check",
 		"biome:fix": "pnpm biome:check --write",

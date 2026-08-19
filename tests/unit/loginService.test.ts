@@ -2,8 +2,10 @@ import { Types } from "mongoose";
 import type { Mock } from "vitest";
 import {
 	ADMIN_KEY,
+	BAD_REQUEST_STATUS_CODE,
+	FORBIDDEN_STATUS_CODE,
+	INVALID_LOGIN_CREDENTIALS_ERROR_MESSAGE,
 	NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE,
-	WRONG_PASSWORD_ERROR_MESSAGE,
 } from "../../constants.ts";
 import { loginService } from "../../services/auth.ts";
 import { getUserByEmailService } from "../../services/user.ts";
@@ -46,16 +48,19 @@ const testUser = {
 	dateCreated: new Date(),
 };
 
-test("should throw invalid email error message when email is not registered", async () => {
+test("should throw error message when email is not found", async () => {
 	const getUserByEmailServiceMock = getUserByEmailService as Mock;
 
 	getUserByEmailServiceMock.mockResolvedValueOnce(null);
 
 	const value = loginService("nonexistent@example.com", "anyPassword");
-	await expect(value).rejects.toThrow("Invalid email");
+	await expect(value).rejects.toMatchObject({
+		message: INVALID_LOGIN_CREDENTIALS_ERROR_MESSAGE,
+		status: BAD_REQUEST_STATUS_CODE,
+	});
 });
 
-test("should throw invalid password error message when password is incorrect", async () => {
+test("should throw error message when password is wrong", async () => {
 	const getUserByEmailServiceMock = getUserByEmailService as Mock;
 	const bcryptMock = bcrypt.isMatchingPassword as Mock;
 
@@ -63,7 +68,10 @@ test("should throw invalid password error message when password is incorrect", a
 	bcryptMock.mockResolvedValueOnce(false);
 
 	const value = loginService(testUser.email, "wrongPassword");
-	await expect(value).rejects.toThrow(WRONG_PASSWORD_ERROR_MESSAGE);
+	await expect(value).rejects.toMatchObject({
+		message: INVALID_LOGIN_CREDENTIALS_ERROR_MESSAGE,
+		status: BAD_REQUEST_STATUS_CODE,
+	});
 });
 
 test("should throw error when non-admin user is trying to log in", async () => {
@@ -84,7 +92,10 @@ test("should throw error when non-admin user is trying to log in", async () => {
 	bcryptMock.mockResolvedValueOnce(true);
 
 	const value = loginService(testUser.email, "correctPassword");
-	await expect(value).rejects.toThrow(NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE);
+	await expect(value).rejects.toMatchObject({
+		message: NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE,
+		status: FORBIDDEN_STATUS_CODE,
+	});
 });
 
 test("should return user and token information when login is successful", async () => {

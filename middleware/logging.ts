@@ -12,6 +12,7 @@ import {
 	INTERNAL_SERVER_ERROR_STATUS_CODE,
 	UNAUTHORIZED_STATUS_CODE,
 } from "../constants.ts";
+import type { RequestWithRequestId } from "../types/request.ts";
 
 interface Console {
 	(...data: unknown[]): void;
@@ -37,7 +38,7 @@ export function errorLoggingMiddleware(
 		try {
 			return await func(req, res, next);
 		} catch (err: unknown) {
-			console.error(err);
+			console.error(`[requestId=${getRequestId(req)}]`, err);
 
 			logRequest(console.error, req, "OUR BACKEND ENDPOINT REQUEST ERROR:\n\n");
 
@@ -61,8 +62,12 @@ function logRequest(console: Console, req: Request, label: string) {
 			: "";
 
 	console(
-		`${label}${buildApiRequestString(req.method, fullUrl, headers, body)}`,
+		`${label}Request ID: ${getRequestId(req)}\n${buildApiRequestString(req.method, fullUrl, headers, body)}`,
 	);
+}
+
+function getRequestId(req: Request) {
+	return (req as RequestWithRequestId).requestId;
 }
 
 export function parseError(err: unknown) {
