@@ -9,7 +9,7 @@ import {
 	errorLoggingMiddleware,
 	loggingMiddleware,
 } from "../middleware/logging.ts";
-import { roleSchema } from "../schemas/role.ts";
+import { roleSchema, upsertRoleServiceInputSchema } from "../schemas/role.ts";
 import { createDocumentedRoute } from "../utilities/docs.ts";
 
 const { router, route } = createDocumentedRoute("/api/v1/roles");
@@ -50,7 +50,7 @@ route(
 			body: {
 				content: {
 					"application/json": {
-						schema: roleSchema,
+						schema: upsertRoleServiceInputSchema,
 					},
 				},
 				required: true,

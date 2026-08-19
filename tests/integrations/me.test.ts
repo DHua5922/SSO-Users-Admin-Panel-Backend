@@ -18,5 +18,6 @@ test("should give authenticated user", async () => {
 		email: process.env.GUEST_LOGIN_EMAIL,
 		role: expect.any(String),
 		dateCreated: expect.any(String),
+		systemManaged: true,
 	});
 });

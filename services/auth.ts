@@ -7,9 +7,10 @@ import {
 import { userResponseSchema } from "../schemas/user.ts";
 import { bcrypt } from "../utilities/security.ts";
 import {
-	checkRefreshTokenType,
-	checkRole,
 	jwtToken,
+	requireAdminRole,
+	requireRefreshTokenType,
+	requireToken,
 } from "../utilities/token.ts";
 import { getUserByEmailService } from "./user.ts";
 
@@ -27,7 +28,7 @@ export async function loginService(email: string, passwordInput: string) {
 		throw new ApiError(WRONG_PASSWORD_ERROR_MESSAGE, BAD_REQUEST_STATUS_CODE);
 	}
 
-	checkRole(user.role.key, NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE);
+	requireAdminRole(user.role.key, NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE);
 
 	return {
 		user: userResponseSchema.parse(user),
@@ -36,9 +37,10 @@ export async function loginService(email: string, passwordInput: string) {
 }
 
 export async function refreshTokensService(refreshToken: string) {
+	requireToken(refreshToken);
 	const tokenPayload = jwtToken.decode(refreshToken);
 
-	checkRefreshTokenType(tokenPayload?.type);
+	requireRefreshTokenType(tokenPayload?.type);
 
 	return createTokens(tokenPayload.userId);
 }

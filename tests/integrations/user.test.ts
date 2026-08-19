@@ -19,6 +19,7 @@ test("should get users", async () => {
 		email: expect.any(String),
 		role: expect.any(String),
 		dateCreated: expect.any(String),
+		systemManaged: expect.any(Boolean),
 	};
 	const response = await agent.get(baseRoute);
 
@@ -41,6 +42,7 @@ test("should create user", async () => {
 		email: newUser.email,
 		role: adminRoleId,
 		dateCreated: expect.any(String),
+		systemManaged: false,
 	};
 
 	const response = await agent.put(baseRoute).send(newUser);
@@ -64,6 +66,7 @@ test("should update user", async () => {
 		...newUser,
 		_id: createResponse.body._id,
 		username: "updateduser",
+		systemManaged: createResponse.body.systemManaged,
 	};
 	const expectedResponseBody = {
 		_id: updatedUser._id,
@@ -71,6 +74,7 @@ test("should update user", async () => {
 		email: updatedUser.email,
 		role: adminRoleId,
 		dateCreated: createResponse.body.dateCreated,
+		systemManaged: false,
 	};
 
 	const updateResponse = await agent.put(baseRoute).send(updatedUser);
@@ -87,6 +91,7 @@ async function deleteTestUser(userId: string) {
 		email: expect.any(String),
 		role: adminRoleId,
 		dateCreated: expect.any(String),
+		systemManaged: false,
 	};
 	const deleteResponse = await agent.delete(`${baseRoute}/${userId}`);
 

@@ -26,6 +26,11 @@ const User = mongoose.createModel("user", {
 		type: Date,
 		default: Date.now,
 	},
+	systemManaged: {
+		type: Boolean,
+		default: false,
+		immutable: true,
+	},
 });
 
 export default User;

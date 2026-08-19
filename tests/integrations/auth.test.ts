@@ -23,6 +23,7 @@ test("should log in as guest admin", async () => {
 		email: process.env.GUEST_LOGIN_EMAIL,
 		role: expect.any(String),
 		dateCreated: expect.any(String),
+		systemManaged: true,
 	});
 });
 

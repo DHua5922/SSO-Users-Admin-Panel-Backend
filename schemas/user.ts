@@ -66,6 +66,7 @@ export const internalUserSchema = z.object({
 	}),
 	password: passwordSchema,
 	dateCreated: z.date(),
+	systemManaged: z.boolean().optional(),
 });
 
 export const userResponseSchema = internalUserSchema

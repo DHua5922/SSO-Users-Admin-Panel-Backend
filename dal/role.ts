@@ -12,6 +12,10 @@ export function getRolesDal(query: Partial<RoleType>) {
 	return Role.find(query);
 }
 
+export function getRoleDal(query: Partial<RoleType>) {
+	return Role.findOne(query);
+}
+
 export function upsertRoleDal(
 	id: UpsertRoleServiceInput["_id"],
 	update: Partial<UpsertRoleServiceInput> & { key?: string },
@@ -24,5 +28,8 @@ export function upsertRoleDal(
 }
 
 export function deleteRoleByIdDal(id: RoleType["_id"]) {
-	return Role.findByIdAndDelete(id);
+	return Role.findOneAndDelete({
+		_id: id,
+		systemManaged: { $ne: true },
+	});
 }

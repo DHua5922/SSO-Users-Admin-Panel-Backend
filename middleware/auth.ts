@@ -1,11 +1,16 @@
 import type { NextFunction, Response } from "express";
+import { ApiError } from "js-ts-kit";
+import {
+	UNAUTHORIZED_ERROR_MESSAGE,
+	UNAUTHORIZED_STATUS_CODE,
+} from "../constants.ts";
 import { getUserByIdService } from "../services/user.ts";
 import type { RequestWithUser } from "../types/request.ts";
 import {
-	checkAccessTokenType,
-	checkRole,
-	checkToken,
 	jwtToken,
+	requireAccessTokenType,
+	requireAdminRole,
+	requireToken,
 } from "../utilities/token.ts";
 
 export async function secureMiddleware(
@@ -16,13 +21,17 @@ export async function secureMiddleware(
 	const accessTokenName = process.env.ACCESS_TOKEN_NAME || "";
 	const token = req.cookies[accessTokenName];
 
-	checkToken(token);
+	requireToken(token);
 
 	const tokenPayload = jwtToken.decode(token);
-	checkAccessTokenType(tokenPayload?.type);
+	requireAccessTokenType(tokenPayload?.type);
 
 	const user = await getUserByIdService(tokenPayload?.userId);
-	checkRole(user.role.key);
+	if (!user) {
+		throw new ApiError(UNAUTHORIZED_ERROR_MESSAGE, UNAUTHORIZED_STATUS_CODE);
+	}
+
+	requireAdminRole(user.role.key);
 	req.user = user;
 
 	next();

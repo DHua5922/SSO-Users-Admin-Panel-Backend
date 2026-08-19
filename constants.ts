@@ -10,6 +10,10 @@ export const NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE = "Only admins can log in";
 export const WRONG_ROLE_ERROR_MESSAGE =
 	"Only administrators can use this route";
 export const UNAUTHORIZED_ERROR_MESSAGE = "Not authorized to use this route";
+export const SYSTEM_MANAGED_USER_DELETE_ERROR_MESSAGE =
+	"System-managed users cannot be deleted";
+export const SYSTEM_MANAGED_ROLE_DELETE_ERROR_MESSAGE =
+	"System-managed roles cannot be deleted";
 
 export const EMPTY_USERNAME_ERROR_MESSAGE = "Username cannot be empty";
 export const EMPTY_EMAIL_ERROR_MESSAGE = "Email cannot be empty";

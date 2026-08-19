@@ -1,5 +1,10 @@
+import { ApiError } from "js-ts-kit";
 import { Types } from "mongoose";
 import { z } from "zod";
+import {
+	FORBIDDEN_STATUS_CODE,
+	SYSTEM_MANAGED_USER_DELETE_ERROR_MESSAGE,
+} from "../constants.ts";
 import {
 	deleteUserByIdDal,
 	getUserCountDal,
@@ -24,7 +29,7 @@ export async function getTotalUserCountService() {
 
 export async function getUserByIdService(_id: InternalUser["_id"]) {
 	const result = await getUserDal({ _id }).populate("role").exec();
-	return internalUserSchema.parse(result);
+	return internalUserSchema.nullable().parse(result);
 }
 
 export async function getUserByEmailService(email: string) {
@@ -60,6 +65,14 @@ export async function upsertUserService(
 }
 
 export async function deleteUserByIdService(_id: InternalUser["_id"]) {
+	const user = await getUserDal({ _id }).exec();
+	if (user?.systemManaged) {
+		throw new ApiError(
+			SYSTEM_MANAGED_USER_DELETE_ERROR_MESSAGE,
+			FORBIDDEN_STATUS_CODE,
+		);
+	}
+
 	const result = await deleteUserByIdDal(_id).populate("role").exec();
 	return userResponseSchema.parse(result);
 }

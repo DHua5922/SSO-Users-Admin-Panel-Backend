@@ -15,6 +15,11 @@ const Role = mongoose.createModel("role", {
 		unique: true,
 		immutable: true,
 	},
+	systemManaged: {
+		type: Boolean,
+		default: false,
+		immutable: true,
+	},
 });
 
 export default Role;

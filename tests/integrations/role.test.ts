@@ -15,6 +15,7 @@ test("should get roles", async () => {
 		_id: expect.any(String),
 		name: expect.any(String),
 		description: expect.any(String),
+		systemManaged: expect.any(Boolean),
 	};
 	const response = await agent.get(baseRoute);
 
@@ -32,6 +33,7 @@ test("should create role", async () => {
 		_id: expect.any(String),
 		name: newRole.name,
 		description: newRole.description,
+		systemManaged: false,
 	};
 
 	const response = await agent.put(baseRoute).send(newRole);
@@ -51,11 +53,13 @@ test("should update role", async () => {
 		_id: createResponse.body._id,
 		name: "updated role",
 		description: "updated role description",
+		systemManaged: createResponse.body.systemManaged,
 	};
 	const expectedResponseBody = {
 		_id: createResponse.body._id,
 		name: updatedRole.name,
 		description: updatedRole.description,
+		systemManaged: false,
 	};
 
 	const updateResponse = await agent.put(baseRoute).send(updatedRole);
@@ -70,6 +74,7 @@ async function deleteTestRole(roleId: string) {
 		_id: roleId,
 		name: expect.any(String),
 		description: expect.any(String),
+		systemManaged: false,
 	};
 	const deleteResponse = await agent.delete(`${baseRoute}/${roleId}`);
 
