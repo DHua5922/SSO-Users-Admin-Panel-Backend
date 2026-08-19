@@ -2,22 +2,30 @@ import "dotenv/config";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Express } from "express";
-import swaggerUi from "swagger-ui-express";
 import { z } from "zod";
 import mongoose from "./config/database.ts";
 import authRouter from "./routes/auth.ts";
 import dashboardRouter from "./routes/dashboard.ts";
+import docsRouter from "./routes/docs.ts";
 import homeRouter from "./routes/home.ts";
 import meRouter from "./routes/me.ts";
 import roleRouter from "./routes/role.ts";
 import userRouter from "./routes/user.ts";
-import { generateOpenApiDocument } from "./utilities/docs.ts";
 
 checkEnvVariables();
 mongoose.connectToMongoDb();
 
-export const app: Express = express();
-runServer(app);
+const app: Express = express();
+configureApp(app);
+
+if (process.env.NODE_ENV !== "test" && !process.env.VERCEL) {
+	const port = process.env.PORT || 8080;
+	app.listen(port, () => {
+		console.log(`Server is running on port ${port}`);
+	});
+}
+
+export default app;
 
 function checkEnvVariables() {
 	const envSchema = z.object({
@@ -42,7 +50,7 @@ function checkEnvVariables() {
 	}
 }
 
-function runServer(app: Express) {
+function configureApp(app: Express) {
 	app.use(express.json());
 	app.use(
 		cors({
@@ -60,19 +68,5 @@ function runServer(app: Express) {
 	app.use(userRouter);
 	app.use(roleRouter);
 	app.use(dashboardRouter);
-
-	app.use(
-		"/docs",
-		swaggerUi.serve,
-		swaggerUi.setup(generateOpenApiDocument(), {
-			swaggerOptions: {
-				withCredentials: true,
-			},
-		}),
-	);
-
-	const port = process.env.PORT || 8080;
-	app.listen(port, () => {
-		console.log(`Server is running on port ${port}`);
-	});
+	app.use(docsRouter);
 }

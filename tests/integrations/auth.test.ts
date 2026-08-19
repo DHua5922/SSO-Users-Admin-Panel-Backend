@@ -1,7 +1,7 @@
 import request from "supertest";
 import type TestAgent from "supertest/lib/agent.js";
 import { SUCCESS_STATUS_CODE } from "../../constants.ts";
-import { app } from "../../index.ts";
+import app from "../../index.ts";
 import { createAuthenticatedAgent } from "./helpers/authenticatedAgent.ts";
 
 let agent: TestAgent;

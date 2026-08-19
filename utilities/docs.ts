@@ -25,6 +25,35 @@ export function generateOpenApiDocument() {
 	});
 }
 
+export function generateApiDocsHtml() {
+	return `<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>SSO Users Admin Panel API</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.32.12/swagger-ui.css" />
+	</head>
+	<body>
+		<div id="swagger-ui"></div>
+		<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.32.12/swagger-ui-bundle.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.32.12/swagger-ui-standalone-preset.js"></script>
+		<script>
+			window.onload = () => {
+				window.ui = SwaggerUIBundle({
+					url: "/openapi.json",
+					dom_id: "#swagger-ui",
+					deepLinking: true,
+					withCredentials: true,
+					presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+					layout: "StandaloneLayout",
+				});
+			};
+		</script>
+	</body>
+</html>`;
+}
+
 export function createDocumentedRoute(basePath = "") {
 	const router = express.Router();
 

@@ -1,5 +1,5 @@
 import request from "supertest";
-import { app } from "../../../index.ts";
+import app from "../../../index.ts";
 
 export async function createAuthenticatedAgent() {
 	const agent = request.agent(app);
