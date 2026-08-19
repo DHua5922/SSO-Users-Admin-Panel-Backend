@@ -16,8 +16,17 @@ import { generateOpenApiDocument } from "./utilities/docs.ts";
 checkEnvVariables();
 mongoose.connectToMongoDb();
 
-export const app: Express = express();
-runServer(app);
+const app: Express = express();
+configureApp(app);
+
+if (process.env.NODE_ENV !== "test" && !process.env.VERCEL) {
+	const port = process.env.PORT || 8080;
+	app.listen(port, () => {
+		console.log(`Server is running on port ${port}`);
+	});
+}
+
+export default app;
 
 function checkEnvVariables() {
 	const envSchema = z.object({
@@ -42,7 +51,7 @@ function checkEnvVariables() {
 	}
 }
 
-function runServer(app: Express) {
+function configureApp(app: Express) {
 	app.use(express.json());
 	app.use(
 		cors({
@@ -70,9 +79,4 @@ function runServer(app: Express) {
 			},
 		}),
 	);
-
-	const port = process.env.PORT || 8080;
-	app.listen(port, () => {
-		console.log(`Server is running on port ${port}`);
-	});
 }
