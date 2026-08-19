@@ -72,7 +72,7 @@ Zod schemas validate service inputs, database results, composed results, and pub
 ## Security decisions
 
 - Passwords are hashed with bcrypt and removed from API responses.
-- Tokens are stored in HTTP-only cookies, and production cookies require HTTPS.
+- Tokens are stored in HTTP-only cookies. Production cookies use `Secure` and `SameSite=None` so the separately deployed frontend can send them over HTTPS.
 - Protected routes resolve the current user from the database and require the immutable `admin` role key.
 - The public guest login authenticates an existing guest-administrator account without exposing its credentials to the frontend.
 - Required users and roles use an immutable `systemManaged` flag and cannot be deleted through their delete endpoints.
