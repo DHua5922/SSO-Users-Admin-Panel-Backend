@@ -43,6 +43,6 @@ export async function deleteRoleByIdService(_id: PersistedRole["_id"]) {
 		);
 	}
 
-	const result = await deleteRoleByIdDal(_id).exec();
-	return result;
+	const deletedRole = await deleteRoleByIdDal(_id).exec();
+	return deletedRole;
 }

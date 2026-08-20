@@ -41,7 +41,7 @@ export async function loginService(email: string, passwordInput: string) {
 	};
 }
 
-export async function refreshTokensService(refreshToken: string) {
+export function refreshTokensService(refreshToken: string) {
 	requireToken(refreshToken);
 	const tokenPayload = jwtToken.decode(refreshToken);
 

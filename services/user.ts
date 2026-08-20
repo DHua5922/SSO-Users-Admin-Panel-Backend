@@ -39,10 +39,13 @@ export async function upsertUserService(userToUpdateInput: UpsertUserInput) {
 	} = userToUpdateInput;
 
 	const userId = userInputId ?? new Types.ObjectId().toHexString();
+	const hashedPassword = password
+		? await bcrypt.hashPassword(password, 10)
+		: undefined;
 
 	const updatedUser = await upsertUserDal(userId, {
 		...userInput,
-		password: password ? await bcrypt.hashPassword(password, 10) : undefined,
+		password: hashedPassword,
 	})
 		.populate("role")
 		.exec();
@@ -59,6 +62,6 @@ export async function deleteUserByIdService(_id: PersistedUser["_id"]) {
 		);
 	}
 
-	const result = await deleteUserByIdDal(_id).populate("role").exec();
-	return result;
+	const deletedUser = await deleteUserByIdDal(_id).populate("role").exec();
+	return deletedUser;
 }

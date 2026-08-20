@@ -50,20 +50,20 @@ export async function guestLoginController(_req: Request, res: Response) {
 	res.status(SUCCESS_STATUS_CODE).json(userResponse);
 }
 
-export async function logoutController(_req: Request, res: Response) {
+export function logoutController(_req: Request, res: Response) {
 	const expiredDate = new Date(0);
 	setCookies(res, "", "", expiredDate, expiredDate);
 	res.status(SUCCESS_STATUS_CODE).json(true);
 }
 
-export async function refreshTokensController(req: Request, res: Response) {
+export function refreshTokensController(req: Request, res: Response) {
 	const oldRefreshToken = req.cookies[process.env.REFRESH_TOKEN_NAME || ""];
 	const {
 		accessToken,
 		refreshToken,
 		cookieAccessTokenExpireTime,
 		cookieRefreshTokenExpireTime,
-	} = await refreshTokensService(oldRefreshToken);
+	} = refreshTokensService(oldRefreshToken);
 
 	setCookies(
 		res,
