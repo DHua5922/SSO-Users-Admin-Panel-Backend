@@ -1,24 +1,21 @@
 import Role from "../models/Role.ts";
-import type {
-	Role as RoleType,
-	UpsertRoleServiceInput,
-} from "../schemas/role.ts";
+import type { PersistedRole, UpsertRoleInput } from "../schemas/role.ts";
 
-export function getRoleCountDal(query: Partial<RoleType>) {
+export function getRoleCountDal(query: Partial<PersistedRole>) {
 	return Role.countDocuments(query);
 }
 
-export function getRolesDal(query: Partial<RoleType>) {
+export function getRolesDal(query: Partial<PersistedRole>) {
 	return Role.find(query);
 }
 
-export function getRoleDal(query: Partial<RoleType>) {
+export function getRoleDal(query: Partial<PersistedRole>) {
 	return Role.findOne(query);
 }
 
 export function upsertRoleDal(
-	id: UpsertRoleServiceInput["_id"],
-	update: Partial<UpsertRoleServiceInput> & { key?: string },
+	id: UpsertRoleInput["_id"],
+	update: Partial<UpsertRoleInput> & { key?: string },
 ) {
 	return Role.findByIdAndUpdate(id, update, {
 		upsert: true,
@@ -27,7 +24,7 @@ export function upsertRoleDal(
 	});
 }
 
-export function deleteRoleByIdDal(id: RoleType["_id"]) {
+export function deleteRoleByIdDal(id: PersistedRole["_id"]) {
 	return Role.findOneAndDelete({
 		_id: id,
 		systemManaged: { $ne: true },

@@ -7,17 +7,19 @@ const baseRoleSchema = z.object({
 	description: z.string(),
 });
 
-export const roleSchema = baseRoleSchema.extend({
+export const roleResponseSchema = baseRoleSchema.extend({
 	_id: objectIdSchema,
 	systemManaged: z.boolean().optional(),
 });
 
-export const upsertRoleServiceInputSchema = baseRoleSchema.extend({
+export const persistedRoleSchema = roleResponseSchema.extend({
+	key: z.string(),
+});
+
+export const upsertRoleRequestSchema = baseRoleSchema.extend({
 	_id: optionalObjectIdStringSchema,
 });
 
-export type UpsertRoleServiceInput = z.infer<
-	typeof upsertRoleServiceInputSchema
->;
-
-export type Role = z.infer<typeof roleSchema>;
+export type UpsertRoleInput = z.output<typeof upsertRoleRequestSchema>;
+export type RoleResponse = z.output<typeof roleResponseSchema>;
+export type PersistedRole = z.output<typeof persistedRoleSchema>;

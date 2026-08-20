@@ -11,7 +11,7 @@ import {
 	getRolesDal,
 	upsertRoleDal,
 } from "../dal/role.ts";
-import type { Role, UpsertRoleServiceInput } from "../schemas/role.ts";
+import type { PersistedRole, UpsertRoleInput } from "../schemas/role.ts";
 
 export async function getTotalRoleCountService() {
 	const result = await getRoleCountDal({});
@@ -23,9 +23,7 @@ export async function getAllRolesService() {
 	return list;
 }
 
-export async function upsertRoleService(
-	roleToUpdateInput: UpsertRoleServiceInput,
-) {
+export async function upsertRoleService(roleToUpdateInput: UpsertRoleInput) {
 	const { _id: roleInputId, ...roleInput } = roleToUpdateInput;
 	const roleId = roleInputId ?? new Types.ObjectId().toHexString();
 	const roleKey = roleInputId ? undefined : `custom:${roleId}`;
@@ -38,7 +36,7 @@ export async function upsertRoleService(
 	return updatedRole;
 }
 
-export async function deleteRoleByIdService(_id: Role["_id"]) {
+export async function deleteRoleByIdService(_id: PersistedRole["_id"]) {
 	const role = await getRoleDal({ _id }).exec();
 	if (role?.systemManaged) {
 		throw new ApiError(

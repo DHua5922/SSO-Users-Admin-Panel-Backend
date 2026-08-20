@@ -10,7 +10,7 @@ import {
 	loggingMiddleware,
 } from "../middleware/logging.ts";
 import {
-	upsertUserServiceInputSchema,
+	upsertUserRequestSchema,
 	userResponseSchema,
 } from "../schemas/user.ts";
 import { createDocumentedRoute } from "../utilities/docs.ts";
@@ -62,7 +62,7 @@ route(
 			body: {
 				content: {
 					"application/json": {
-						schema: upsertUserServiceInputSchema,
+						schema: upsertUserRequestSchema,
 					},
 				},
 				required: true,

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { passwordSchema } from "./user.ts";
 
-export const loginRequestBodySchema = z.object({
+export const loginRequestSchema = z.object({
 	email: z.email(),
 	password: passwordSchema,
 });

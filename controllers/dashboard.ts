@@ -9,5 +9,6 @@ export async function getDashboardStatsController(
 	res: Response,
 ) {
 	const stats = await getDashboardStatsCompositeService();
-	res.status(SUCCESS_STATUS_CODE).json(dashboardStatsSchema.parse(stats));
+	const dashboardStatsResponse = dashboardStatsSchema.parse(stats);
+	res.status(SUCCESS_STATUS_CODE).json(dashboardStatsResponse);
 }

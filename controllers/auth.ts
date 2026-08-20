@@ -1,11 +1,11 @@
 import type { Request, Response } from "express";
 import { SUCCESS_STATUS_CODE } from "../constants.ts";
-import { loginRequestBodySchema } from "../schemas/auth.ts";
+import { loginRequestSchema } from "../schemas/auth.ts";
 import { userResponseSchema } from "../schemas/user.ts";
 import { loginService, refreshTokensService } from "../services/auth.ts";
 
 export async function loginController(req: Request, res: Response) {
-	const { email, password } = loginRequestBodySchema.parse(req.body);
+	const { email, password } = loginRequestSchema.parse(req.body);
 	const {
 		user,
 		accessToken,
@@ -22,7 +22,8 @@ export async function loginController(req: Request, res: Response) {
 		cookieRefreshTokenExpireTime,
 	);
 
-	res.status(SUCCESS_STATUS_CODE).json(userResponseSchema.parse(user));
+	const userResponse = userResponseSchema.parse(user);
+	res.status(SUCCESS_STATUS_CODE).json(userResponse);
 }
 
 export async function guestLoginController(_req: Request, res: Response) {
@@ -45,7 +46,8 @@ export async function guestLoginController(_req: Request, res: Response) {
 		cookieRefreshTokenExpireTime,
 	);
 
-	res.status(SUCCESS_STATUS_CODE).json(userResponseSchema.parse(user));
+	const userResponse = userResponseSchema.parse(user);
+	res.status(SUCCESS_STATUS_CODE).json(userResponse);
 }
 
 export async function logoutController(_req: Request, res: Response) {

@@ -4,5 +4,6 @@ import { userResponseSchema } from "../schemas/user.ts";
 import type { RequestWithUser } from "../types/request.ts";
 
 export async function meController(req: RequestWithUser, res: Response) {
-	res.status(SUCCESS_STATUS_CODE).json(userResponseSchema.parse(req.user));
+	const userResponse = userResponseSchema.parse(req.user);
+	res.status(SUCCESS_STATUS_CODE).json(userResponse);
 }

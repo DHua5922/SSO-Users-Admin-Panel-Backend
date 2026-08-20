@@ -12,9 +12,9 @@ import {
 	upsertUserDal,
 } from "../dal/user.ts";
 import {
-	type InternalUser,
-	internalUserSchema,
-	type UpsertUserServiceInput,
+	type PersistedUser,
+	persistedUserSchema,
+	type UpsertUserInput,
 } from "../schemas/user.ts";
 import { bcrypt } from "../utilities/security.ts";
 
@@ -23,14 +23,14 @@ export async function getTotalUserCountService() {
 	return result;
 }
 
-export async function getUserByIdService(_id: InternalUser["_id"]) {
+export async function getUserByIdService(_id: PersistedUser["_id"]) {
 	const result = await getUserDal({ _id }).populate("role").exec();
-	return internalUserSchema.nullable().parse(result);
+	return persistedUserSchema.nullable().parse(result);
 }
 
 export async function getUserByEmailService(email: string) {
 	const result = await getUserDal({ email }).populate("role").exec();
-	return internalUserSchema.nullable().parse(result);
+	return persistedUserSchema.nullable().parse(result);
 }
 
 export async function getAllUsersService() {
@@ -38,9 +38,7 @@ export async function getAllUsersService() {
 	return list;
 }
 
-export async function upsertUserService(
-	userToUpdateInput: UpsertUserServiceInput,
-) {
+export async function upsertUserService(userToUpdateInput: UpsertUserInput) {
 	const {
 		confirmPassword,
 		password,
@@ -60,7 +58,7 @@ export async function upsertUserService(
 	return updatedUser;
 }
 
-export async function deleteUserByIdService(_id: InternalUser["_id"]) {
+export async function deleteUserByIdService(_id: PersistedUser["_id"]) {
 	const user = await getUserDal({ _id }).exec();
 	if (user?.systemManaged) {
 		throw new ApiError(

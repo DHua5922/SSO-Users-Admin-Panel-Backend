@@ -10,7 +10,7 @@ import {
 	errorLoggingMiddleware,
 	loggingMiddleware,
 } from "../middleware/logging.ts";
-import { loginRequestBodySchema } from "../schemas/auth.ts";
+import { loginRequestSchema } from "../schemas/auth.ts";
 import { userResponseSchema } from "../schemas/user.ts";
 import { createDocumentedRoute } from "../utilities/docs.ts";
 
@@ -48,7 +48,7 @@ route(
 			body: {
 				content: {
 					"application/json": {
-						schema: loginRequestBodySchema,
+						schema: loginRequestSchema,
 					},
 				},
 				required: true,
