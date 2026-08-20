@@ -1,10 +1,5 @@
 import { z } from "zod";
-import {
-	EMPTY_EMAIL_ERROR_MESSAGE,
-	EMPTY_PASSWORD_ERROR_MESSAGE,
-	EMPTY_USERNAME_ERROR_MESSAGE,
-	NO_MATCHING_PASSWORDS_ERROR_MESSAGE,
-} from "../constants.ts";
+import { EMPTY_PASSWORD_ERROR_MESSAGE } from "../constants.ts";
 import {
 	objectIdSchema,
 	objectIdStringSchema,
@@ -15,7 +10,7 @@ import { persistedRoleSchema } from "./role.ts";
 const usernameSchema = z
 	.string()
 	.min(1, {
-		message: EMPTY_USERNAME_ERROR_MESSAGE,
+		message: "Username cannot be empty",
 	})
 	.meta({
 		type: "string",
@@ -31,9 +26,7 @@ export const upsertUserRequestSchema = z
 	.object({
 		_id: optionalObjectIdStringSchema,
 		username: usernameSchema,
-		email: z.email().min(1, {
-			message: EMPTY_EMAIL_ERROR_MESSAGE,
-		}),
+		email: z.email().min(1, { message: "Email cannot be empty" }),
 		role: objectIdStringSchema,
 		password: passwordSchema.optional(),
 		confirmPassword: passwordSchema.optional(),
@@ -43,7 +36,7 @@ export const upsertUserRequestSchema = z
 		if (data.password !== data.confirmPassword) {
 			ctx.addIssue({
 				code: "custom",
-				message: NO_MATCHING_PASSWORDS_ERROR_MESSAGE,
+				message: "No matching passwords",
 				path: ["confirmPassword"],
 			});
 		}
@@ -77,4 +70,3 @@ export const userResponseSchema = persistedUserSchema
 
 export type UpsertUserInput = z.output<typeof upsertUserRequestSchema>;
 export type PersistedUser = z.output<typeof persistedUserSchema>;
-export type UserResponse = z.output<typeof userResponseSchema>;

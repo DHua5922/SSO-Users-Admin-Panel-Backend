@@ -1,9 +1,8 @@
 import { z } from "zod";
-import { EMPTY_ROLE_NAME_ERROR_MESSAGE } from "../constants.ts";
 import { objectIdSchema, optionalObjectIdStringSchema } from "./mongodb.ts";
 
 const baseRoleSchema = z.object({
-	name: z.string().min(1, { message: EMPTY_ROLE_NAME_ERROR_MESSAGE }),
+	name: z.string().min(1, { message: "Name cannot be empty" }),
 	description: z.string(),
 });
 
@@ -21,5 +20,4 @@ export const upsertRoleRequestSchema = baseRoleSchema.extend({
 });
 
 export type UpsertRoleInput = z.output<typeof upsertRoleRequestSchema>;
-export type RoleResponse = z.output<typeof roleResponseSchema>;
 export type PersistedRole = z.output<typeof persistedRoleSchema>;
