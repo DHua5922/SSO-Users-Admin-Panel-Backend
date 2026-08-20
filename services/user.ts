@@ -11,31 +11,23 @@ import {
 	getUsersDal,
 	upsertUserDal,
 } from "../dal/user.ts";
-import {
-	type PersistedUser,
-	persistedUserSchema,
-	type UpsertUserInput,
-} from "../schemas/user.ts";
+import type { PersistedUser, UpsertUserInput } from "../schemas/user.ts";
 import { bcrypt } from "../utilities/security.ts";
 
-export async function getTotalUserCountService() {
-	const result = await getUserCountDal({});
-	return result;
+export function getTotalUserCountService() {
+	return getUserCountDal({});
 }
 
-export async function getUserByIdService(_id: PersistedUser["_id"]) {
-	const result = await getUserDal({ _id }).populate("role").exec();
-	return persistedUserSchema.nullable().parse(result);
+export function getUserByIdService(_id: PersistedUser["_id"]) {
+	return getUserDal({ _id }).populate("role").exec();
 }
 
-export async function getUserByEmailService(email: string) {
-	const result = await getUserDal({ email }).populate("role").exec();
-	return persistedUserSchema.nullable().parse(result);
+export function getUserByEmailService(email: string) {
+	return getUserDal({ email }).populate("role").exec();
 }
 
-export async function getAllUsersService() {
-	const list = await getUsersDal({}).populate("role").exec();
-	return list;
+export function getAllUsersService() {
+	return getUsersDal({}).populate("role").exec();
 }
 
 export async function upsertUserService(userToUpdateInput: UpsertUserInput) {

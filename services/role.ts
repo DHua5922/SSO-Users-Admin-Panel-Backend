@@ -13,14 +13,12 @@ import {
 } from "../dal/role.ts";
 import type { PersistedRole, UpsertRoleInput } from "../schemas/role.ts";
 
-export async function getTotalRoleCountService() {
-	const result = await getRoleCountDal({});
-	return result;
+export function getTotalRoleCountService() {
+	return getRoleCountDal({});
 }
 
-export async function getAllRolesService() {
-	const list = await getRolesDal({}).lean().exec();
-	return list;
+export function getAllRolesService() {
+	return getRolesDal({}).lean().exec();
 }
 
 export async function upsertRoleService(roleToUpdateInput: UpsertRoleInput) {

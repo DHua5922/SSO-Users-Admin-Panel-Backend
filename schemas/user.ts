@@ -50,7 +50,7 @@ export const upsertUserRequestSchema = z
 		}
 	});
 
-export const persistedUserSchema = z.object({
+const persistedUserSchema = z.object({
 	_id: objectIdSchema,
 	username: usernameSchema,
 	email: z.email(),
