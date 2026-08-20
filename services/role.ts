@@ -1,6 +1,5 @@
 import { ApiError } from "js-ts-kit";
 import { Types } from "mongoose";
-import { z } from "zod";
 import {
 	FORBIDDEN_STATUS_CODE,
 	SYSTEM_MANAGED_ROLE_DELETE_ERROR_MESSAGE,
@@ -12,29 +11,22 @@ import {
 	getRolesDal,
 	upsertRoleDal,
 } from "../dal/role.ts";
-import { totalRolesSchema } from "../schemas/dashboard.ts";
-import {
-	type Role,
-	roleSchema,
-	type UpsertRoleServiceInput,
-	upsertRoleServiceInputSchema,
-} from "../schemas/role.ts";
+import type { Role, UpsertRoleServiceInput } from "../schemas/role.ts";
 
 export async function getTotalRoleCountService() {
 	const result = await getRoleCountDal({});
-	return totalRolesSchema.parse(result);
+	return result;
 }
 
 export async function getAllRolesService() {
 	const list = await getRolesDal({}).lean().exec();
-	return z.array(roleSchema).parse(list);
+	return list;
 }
 
 export async function upsertRoleService(
 	roleToUpdateInput: UpsertRoleServiceInput,
 ) {
-	const { _id: roleInputId, ...roleInput } =
-		upsertRoleServiceInputSchema.parse(roleToUpdateInput);
+	const { _id: roleInputId, ...roleInput } = roleToUpdateInput;
 	const roleId = roleInputId ?? new Types.ObjectId().toHexString();
 	const roleKey = roleInputId ? undefined : `custom:${roleId}`;
 
@@ -43,7 +35,7 @@ export async function upsertRoleService(
 		key: roleKey,
 	}).exec();
 
-	return roleSchema.parse(updatedRole);
+	return updatedRole;
 }
 
 export async function deleteRoleByIdService(_id: Role["_id"]) {
@@ -56,5 +48,5 @@ export async function deleteRoleByIdService(_id: Role["_id"]) {
 	}
 
 	const result = await deleteRoleByIdDal(_id).exec();
-	return roleSchema.parse(result);
+	return result;
 }

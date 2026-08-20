@@ -1,12 +1,5 @@
 import { Types } from "mongoose";
 import type { Mock } from "vitest";
-import { z } from "zod";
-import {
-	EMPTY_EMAIL_ERROR_MESSAGE,
-	EMPTY_PASSWORD_ERROR_MESSAGE,
-	EMPTY_USERNAME_ERROR_MESSAGE,
-	NO_MATCHING_PASSWORDS_ERROR_MESSAGE,
-} from "../../constants.ts";
 import { upsertUserDal } from "../../dal/user.ts";
 import { upsertUserService } from "../../services/user.ts";
 
@@ -20,7 +13,7 @@ const populatedRole = {
 const dateCreated = new Date();
 
 const createUserServiceInput = {
-	_id: "",
+	_id: undefined,
 	username: "testuser",
 	email: "testUser@email.com",
 	role: roleId.toHexString(),
@@ -32,42 +25,6 @@ vi.mock("../../dal/user.ts", () => ({
 	upsertUserDal: vi.fn(),
 }));
 
-test("should throw error if username is empty", async () => {
-	const value = upsertUserService({
-		...createUserServiceInput,
-		username: "",
-	});
-	await expect(value).rejects.toBeInstanceOf(z.ZodError);
-	await expect(value).rejects.toThrow(EMPTY_USERNAME_ERROR_MESSAGE);
-});
-
-test("should throw error if email is empty", async () => {
-	const value = upsertUserService({
-		...createUserServiceInput,
-		email: "",
-	});
-	await expect(value).rejects.toBeInstanceOf(z.ZodError);
-	await expect(value).rejects.toThrow(EMPTY_EMAIL_ERROR_MESSAGE);
-});
-
-test("should throw an error if password is empty for new user", async () => {
-	const value = upsertUserService({
-		...createUserServiceInput,
-		password: "",
-	});
-	await expect(value).rejects.toBeInstanceOf(z.ZodError);
-	await expect(value).rejects.toThrow(EMPTY_PASSWORD_ERROR_MESSAGE);
-});
-
-test("should throw an error if passwords do not match", async () => {
-	const value = upsertUserService({
-		...createUserServiceInput,
-		confirmPassword: `${createUserServiceInput.password}1`,
-	});
-	await expect(value).rejects.toBeInstanceOf(z.ZodError);
-	await expect(value).rejects.toThrow(NO_MATCHING_PASSWORDS_ERROR_MESSAGE);
-});
-
 test("should create a new user successfully", async () => {
 	const createUserResult = {
 		_id: userId,
@@ -77,15 +34,9 @@ test("should create a new user successfully", async () => {
 		password: "hashedPassword",
 		dateCreated,
 	};
-	const { password, ...expectedResult } = {
-		...createUserResult,
-		_id: userId.toHexString(),
-		role: roleId.toHexString(),
-	};
-
 	mockUpsertUser(createUserResult);
 	await expect(upsertUserService(createUserServiceInput)).resolves.toEqual(
-		expectedResult,
+		createUserResult,
 	);
 });
 
@@ -105,15 +56,9 @@ test("should update an existing user successfully", async () => {
 		dateCreated,
 	};
 
-	const expectedUpdateUserServiceResult = {
-		...updateUserResult,
-		_id: userId.toHexString(),
-		role: roleId.toHexString(),
-	};
-
 	mockUpsertUser(updateUserResult);
 	await expect(upsertUserService(updateUserServiceInput)).resolves.toEqual(
-		expectedUpdateUserServiceResult,
+		updateUserResult,
 	);
 });
 

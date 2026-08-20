@@ -10,17 +10,31 @@ import {
 	errorLoggingMiddleware,
 	loggingMiddleware,
 } from "../middleware/logging.ts";
-import { passwordSchema, userResponseSchema } from "../schemas/user.ts";
+import { loginRequestBodySchema } from "../schemas/auth.ts";
+import { userResponseSchema } from "../schemas/user.ts";
 import { createDocumentedRoute } from "../utilities/docs.ts";
 
 const { router, route } = createDocumentedRoute("/api/v1/auth");
 
 const tags = ["Authentication"];
-
-const loginRequestBodySchema = z.object({
-	email: z.email(),
-	password: passwordSchema,
-});
+const userResponseConfig = {
+	"200": {
+		content: {
+			"application/json": {
+				schema: userResponseSchema,
+			},
+		},
+	},
+};
+const booleanResponseConfig = {
+	"200": {
+		content: {
+			"application/json": {
+				schema: z.boolean(),
+			},
+		},
+	},
+};
 
 route(
 	{
@@ -40,15 +54,7 @@ route(
 				required: true,
 			},
 		},
-		responses: {
-			"200": {
-				content: {
-					"application/json": {
-						schema: userResponseSchema,
-					},
-				},
-			},
-		},
+		responses: userResponseConfig,
 	},
 	loggingMiddleware,
 	errorLoggingMiddleware(loginController),
@@ -62,15 +68,7 @@ route(
 		summary: "Log in as guest",
 		description:
 			"Authenticate a user as guest admin and returns user information. The password is not included in the response. Access token and refresh token are set as http-only cookies.",
-		responses: {
-			"200": {
-				content: {
-					"application/json": {
-						schema: userResponseSchema,
-					},
-				},
-			},
-		},
+		responses: userResponseConfig,
 	},
 	loggingMiddleware,
 	errorLoggingMiddleware(guestLoginController),
@@ -84,15 +82,7 @@ route(
 		summary: "Log out",
 		description:
 			"Log out the user by clearing the access token and refresh token cookies.",
-		responses: {
-			"200": {
-				content: {
-					"application/json": {
-						schema: z.boolean(),
-					},
-				},
-			},
-		},
+		responses: booleanResponseConfig,
 	},
 	loggingMiddleware,
 	errorLoggingMiddleware(secureMiddleware),
@@ -107,15 +97,7 @@ route(
 		summary: "Refresh tokens",
 		description:
 			"Refresh the access token and refresh token and set them in http-only cookies. This endpoint uses the refresh token from the http-only cookie to generate new access and refresh tokens.",
-		responses: {
-			"200": {
-				content: {
-					"application/json": {
-						schema: z.boolean(),
-					},
-				},
-			},
-		},
+		responses: booleanResponseConfig,
 	},
 	loggingMiddleware,
 	errorLoggingMiddleware(refreshTokensController),

@@ -1,6 +1,5 @@
 import { ApiError } from "js-ts-kit";
 import { Types } from "mongoose";
-import { z } from "zod";
 import {
 	FORBIDDEN_STATUS_CODE,
 	SYSTEM_MANAGED_USER_DELETE_ERROR_MESSAGE,
@@ -12,19 +11,16 @@ import {
 	getUsersDal,
 	upsertUserDal,
 } from "../dal/user.ts";
-import { totalUsersSchema } from "../schemas/dashboard.ts";
 import {
 	type InternalUser,
 	internalUserSchema,
 	type UpsertUserServiceInput,
-	upsertUserServiceInputSchema,
-	userResponseSchema,
 } from "../schemas/user.ts";
 import { bcrypt } from "../utilities/security.ts";
 
 export async function getTotalUserCountService() {
 	const result = await getUserCountDal({});
-	return totalUsersSchema.parse(result);
+	return result;
 }
 
 export async function getUserByIdService(_id: InternalUser["_id"]) {
@@ -39,7 +35,7 @@ export async function getUserByEmailService(email: string) {
 
 export async function getAllUsersService() {
 	const list = await getUsersDal({}).populate("role").exec();
-	return z.array(userResponseSchema).parse(list);
+	return list;
 }
 
 export async function upsertUserService(
@@ -50,7 +46,7 @@ export async function upsertUserService(
 		password,
 		_id: userInputId,
 		...userInput
-	} = upsertUserServiceInputSchema.parse(userToUpdateInput);
+	} = userToUpdateInput;
 
 	const userId = userInputId ?? new Types.ObjectId().toHexString();
 
@@ -61,7 +57,7 @@ export async function upsertUserService(
 		.populate("role")
 		.exec();
 
-	return userResponseSchema.parse(updatedUser);
+	return updatedUser;
 }
 
 export async function deleteUserByIdService(_id: InternalUser["_id"]) {
@@ -74,5 +70,5 @@ export async function deleteUserByIdService(_id: InternalUser["_id"]) {
 	}
 
 	const result = await deleteUserByIdDal(_id).populate("role").exec();
-	return userResponseSchema.parse(result);
+	return result;
 }
