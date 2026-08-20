@@ -1,14 +1,12 @@
 import { Types } from "mongoose";
 import type { Mock } from "vitest";
-import { z } from "zod";
-import { EMPTY_ROLE_NAME_ERROR_MESSAGE } from "../../constants.ts";
 import { upsertRoleDal } from "../../dal/role.ts";
 import { upsertRoleService } from "../../services/role.ts";
 
 const roleId = new Types.ObjectId();
 
 const createRoleServiceInput = {
-	_id: "",
+	_id: undefined,
 	name: "test role",
 	description: "test role description",
 };
@@ -23,29 +21,15 @@ vi.mock("../../dal/role.ts", () => ({
 	upsertRoleDal: vi.fn(),
 }));
 
-test("should throw error if name is empty", async () => {
-	const value = upsertRoleService({
-		...createRoleServiceInput,
-		name: "",
-	});
-	await expect(value).rejects.toBeInstanceOf(z.ZodError);
-	await expect(value).rejects.toThrow(EMPTY_ROLE_NAME_ERROR_MESSAGE);
-});
-
 test("should create a new role successfully", async () => {
 	const createRoleResult = {
 		_id: roleId,
 		name: createRoleServiceInput.name,
 		description: createRoleServiceInput.description,
 	};
-	const expectedResult = {
-		...createRoleResult,
-		_id: roleId.toHexString(),
-	};
-
 	mockUpsertRole(createRoleResult);
 	await expect(upsertRoleService(createRoleServiceInput)).resolves.toEqual(
-		expectedResult,
+		createRoleResult,
 	);
 });
 
@@ -62,14 +46,9 @@ test("should update an existing role successfully", async () => {
 		description: updateRoleServiceInput.description,
 	};
 
-	const expectedUpdateRoleServiceResult = {
-		...updateRoleResult,
-		_id: roleId.toHexString(),
-	};
-
 	mockUpsertRole(updateRoleResult);
 	await expect(upsertRoleService(updateRoleServiceInput)).resolves.toEqual(
-		expectedUpdateRoleServiceResult,
+		updateRoleResult,
 	);
 });
 

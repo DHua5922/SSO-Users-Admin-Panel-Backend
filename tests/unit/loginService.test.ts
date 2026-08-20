@@ -109,17 +109,9 @@ test("should return user and token information when login is successful", async 
 		.mockReturnValueOnce("accessToken")
 		.mockReturnValueOnce("refreshToken");
 
-	const { password, ...userWithoutPassword } = testUser;
-	const value = await loginService(
-		userWithoutPassword.email,
-		"correctPassword",
-	);
+	const value = await loginService(testUser.email, "correctPassword");
 	const expectedResult = {
-		user: {
-			...userWithoutPassword,
-			_id: userWithoutPassword._id.toHexString(),
-			role: userWithoutPassword.role._id.toHexString(),
-		},
+		user: testUser,
 		accessToken: "accessToken",
 		refreshToken: "refreshToken",
 		cookieAccessTokenExpireTime: expect.any(Date),

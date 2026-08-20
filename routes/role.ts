@@ -9,7 +9,10 @@ import {
 	errorLoggingMiddleware,
 	loggingMiddleware,
 } from "../middleware/logging.ts";
-import { roleSchema, upsertRoleServiceInputSchema } from "../schemas/role.ts";
+import {
+	roleResponseSchema,
+	upsertRoleRequestSchema,
+} from "../schemas/role.ts";
 import { createDocumentedRoute } from "../utilities/docs.ts";
 
 const { router, route } = createDocumentedRoute("/api/v1/roles");
@@ -27,7 +30,7 @@ route(
 			"200": {
 				content: {
 					"application/json": {
-						schema: z.array(roleSchema),
+						schema: z.array(roleResponseSchema),
 					},
 				},
 			},
@@ -50,7 +53,7 @@ route(
 			body: {
 				content: {
 					"application/json": {
-						schema: upsertRoleServiceInputSchema,
+						schema: upsertRoleRequestSchema,
 					},
 				},
 				required: true,
@@ -60,7 +63,7 @@ route(
 			"200": {
 				content: {
 					"application/json": {
-						schema: roleSchema,
+						schema: roleResponseSchema,
 					},
 				},
 			},
@@ -82,7 +85,7 @@ route(
 			"200": {
 				content: {
 					"application/json": {
-						schema: roleSchema,
+						schema: roleResponseSchema,
 					},
 				},
 			},

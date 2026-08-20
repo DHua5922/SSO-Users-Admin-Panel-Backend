@@ -7,7 +7,7 @@
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development nodemon --watch './**/*.ts' --exec node index.ts",
 		"quality:check": "pnpm biome:check && pnpm check:unused && pnpm typescript:check",
-		"biome:check": "pnpx @biomejs/biome check",
+		"biome:check": "biome check .",
 		"biome:fix": "pnpm biome:check --write",
 		"check:unused": "pnpm knip",
 		"typescript:check": "tsc -p tsconfig.json && tsc -p tsconfig.test.json",

@@ -1,15 +1,18 @@
 import type { Request, Response } from "express";
 import { SUCCESS_STATUS_CODE } from "../constants.ts";
+import { loginRequestSchema } from "../schemas/auth.ts";
+import { userResponseSchema } from "../schemas/user.ts";
 import { loginService, refreshTokensService } from "../services/auth.ts";
 
 export async function loginController(req: Request, res: Response) {
+	const { email, password } = loginRequestSchema.parse(req.body);
 	const {
 		user,
 		accessToken,
 		refreshToken,
 		cookieAccessTokenExpireTime,
 		cookieRefreshTokenExpireTime,
-	} = await loginService(req.body.email, req.body.password);
+	} = await loginService(email, password);
 
 	setCookies(
 		res,
@@ -19,7 +22,8 @@ export async function loginController(req: Request, res: Response) {
 		cookieRefreshTokenExpireTime,
 	);
 
-	res.status(SUCCESS_STATUS_CODE).json(user);
+	const userResponse = userResponseSchema.parse(user);
+	res.status(SUCCESS_STATUS_CODE).json(userResponse);
 }
 
 export async function guestLoginController(_req: Request, res: Response) {
@@ -42,23 +46,24 @@ export async function guestLoginController(_req: Request, res: Response) {
 		cookieRefreshTokenExpireTime,
 	);
 
-	res.status(SUCCESS_STATUS_CODE).json(user);
+	const userResponse = userResponseSchema.parse(user);
+	res.status(SUCCESS_STATUS_CODE).json(userResponse);
 }
 
-export async function logoutController(_req: Request, res: Response) {
+export function logoutController(_req: Request, res: Response) {
 	const expiredDate = new Date(0);
 	setCookies(res, "", "", expiredDate, expiredDate);
 	res.status(SUCCESS_STATUS_CODE).json(true);
 }
 
-export async function refreshTokensController(req: Request, res: Response) {
+export function refreshTokensController(req: Request, res: Response) {
 	const oldRefreshToken = req.cookies[process.env.REFRESH_TOKEN_NAME || ""];
 	const {
 		accessToken,
 		refreshToken,
 		cookieAccessTokenExpireTime,
 		cookieRefreshTokenExpireTime,
-	} = await refreshTokensService(oldRefreshToken);
+	} = refreshTokensService(oldRefreshToken);
 
 	setCookies(
 		res,

@@ -1,8 +1,8 @@
 import type { Request } from "express";
-import type { InternalUser } from "../schemas/user.ts";
+import type { PersistedUser } from "../schemas/user.ts";
 
 export interface RequestWithUser extends Request {
-	user?: InternalUser;
+	user?: PersistedUser;
 }
 
 export interface RequestWithRequestId extends Request {

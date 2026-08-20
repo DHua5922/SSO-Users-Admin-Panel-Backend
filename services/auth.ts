@@ -4,7 +4,6 @@ import {
 	INVALID_LOGIN_CREDENTIALS_ERROR_MESSAGE,
 	NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE,
 } from "../constants.ts";
-import { userResponseSchema } from "../schemas/user.ts";
 import { bcrypt } from "../utilities/security.ts";
 import {
 	jwtToken,
@@ -37,12 +36,12 @@ export async function loginService(email: string, passwordInput: string) {
 	requireAdminRole(user.role.key, NOT_AN_ADMIN_LOGIN_ERROR_MESSAGE);
 
 	return {
-		user: userResponseSchema.parse(user),
+		user,
 		...createTokens(user._id),
 	};
 }
 
-export async function refreshTokensService(refreshToken: string) {
+export function refreshTokensService(refreshToken: string) {
 	requireToken(refreshToken);
 	const tokenPayload = jwtToken.decode(refreshToken);
 

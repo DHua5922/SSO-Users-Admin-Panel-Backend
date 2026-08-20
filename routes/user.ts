@@ -10,7 +10,7 @@ import {
 	loggingMiddleware,
 } from "../middleware/logging.ts";
 import {
-	upsertUserServiceInputSchema,
+	upsertUserRequestSchema,
 	userResponseSchema,
 } from "../schemas/user.ts";
 import { createDocumentedRoute } from "../utilities/docs.ts";
@@ -18,6 +18,15 @@ import { createDocumentedRoute } from "../utilities/docs.ts";
 const { router, route } = createDocumentedRoute("/api/v1/users");
 
 const tags = ["User"];
+const userResponseConfig = {
+	"200": {
+		content: {
+			"application/json": {
+				schema: userResponseSchema,
+			},
+		},
+	},
+};
 
 route(
 	{
@@ -53,21 +62,13 @@ route(
 			body: {
 				content: {
 					"application/json": {
-						schema: upsertUserServiceInputSchema,
+						schema: upsertUserRequestSchema,
 					},
 				},
 				required: true,
 			},
 		},
-		responses: {
-			"200": {
-				content: {
-					"application/json": {
-						schema: userResponseSchema,
-					},
-				},
-			},
-		},
+		responses: userResponseConfig,
 	},
 	loggingMiddleware,
 	errorLoggingMiddleware(secureMiddleware),
@@ -81,15 +82,7 @@ route(
 		tags,
 		summary: "Delete user",
 		description: "Delete a user by their ID.",
-		responses: {
-			"200": {
-				content: {
-					"application/json": {
-						schema: userResponseSchema,
-					},
-				},
-			},
-		},
+		responses: userResponseConfig,
 	},
 	loggingMiddleware,
 	errorLoggingMiddleware(secureMiddleware),

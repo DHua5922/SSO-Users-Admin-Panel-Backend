@@ -1,4 +1,3 @@
-import { SUCCESS_STATUS_CODE } from "../constants.ts";
 import { getDashboardStatsController } from "../controllers/dashboard.ts";
 import { secureMiddleware } from "../middleware/auth.ts";
 import {
@@ -19,7 +18,7 @@ route(
 		description:
 			"Retrieve the current statistics for the dashboard, including total users and total roles.",
 		responses: {
-			[`${SUCCESS_STATUS_CODE}`]: {
+			"200": {
 				content: {
 					"application/json": {
 						schema: dashboardStatsSchema,

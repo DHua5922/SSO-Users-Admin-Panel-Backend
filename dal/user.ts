@@ -1,21 +1,21 @@
 import User from "../models/User.ts";
-import type { InternalUser, UpsertUserServiceInput } from "../schemas/user.ts";
+import type { PersistedUser, UpsertUserInput } from "../schemas/user.ts";
 
-export function getUserCountDal(query: Partial<InternalUser>) {
+export function getUserCountDal(query: Partial<PersistedUser>) {
 	return User.countDocuments(query);
 }
 
-export function getUserDal(query: Partial<InternalUser>) {
+export function getUserDal(query: Partial<PersistedUser>) {
 	return User.findOne(query);
 }
 
-export function getUsersDal(query: Partial<InternalUser>) {
+export function getUsersDal(query: Partial<PersistedUser>) {
 	return User.find(query);
 }
 
 export function upsertUserDal(
-	id: UpsertUserServiceInput["_id"],
-	update: Partial<UpsertUserServiceInput>,
+	id: UpsertUserInput["_id"],
+	update: Partial<UpsertUserInput>,
 ) {
 	return User.findByIdAndUpdate(id, update, {
 		upsert: true,
@@ -24,7 +24,7 @@ export function upsertUserDal(
 	});
 }
 
-export function deleteUserByIdDal(id: InternalUser["_id"]) {
+export function deleteUserByIdDal(id: PersistedUser["_id"]) {
 	return User.findOneAndDelete({
 		_id: id,
 		systemManaged: { $ne: true },

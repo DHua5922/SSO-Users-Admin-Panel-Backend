@@ -57,15 +57,15 @@ route -> middleware -> controller -> service -> DAL -> model -> MongoDB
                               -> composite service -> services
 ```
 
-Zod schemas validate service inputs, database results, composed results, and public response shapes. Authentication middleware may call a service before the controller to resolve and authorize the current user. The home and documentation routes are intentionally simpler and respond directly from their controllers.
+Controllers use Zod at the HTTP boundary: request schemas validate untrusted request bodies before calling services, and response schemas validate and shape service results before they are sent to clients. Services therefore receive typed inputs and remain focused on business rules and persistence coordination. Authentication middleware may call a service before the controller to resolve and authorize the current user. The home and documentation routes are intentionally simpler and respond directly from their controllers.
 
 - `routes/` defines endpoints, middleware order, and OpenAPI metadata.
-- `controllers/` translates HTTP requests and responses.
-- `services/` contains validation and business rules.
+- `controllers/` validates request bodies, shapes responses, and translates between HTTP and application operations.
+- `services/` contains business rules and coordinates persistence operations.
 - `composite-services/` coordinates operations spanning multiple services.
 - `dal/` contains database queries.
 - `models/` defines MongoDB persistence models.
-- `schemas/` defines runtime validation and public response shapes.
+- `schemas/` defines request, response, and persistence-related data shapes used for runtime validation, TypeScript inference, and OpenAPI metadata.
 - `middleware/` handles request IDs, authentication, authorization, errors, and request logging.
 - `utilities/` contains reusable token, password, and documentation support.
 
@@ -155,7 +155,7 @@ Every response includes a server-generated UUID in the `X-Request-ID` header. Lo
 | `DELETE` | `/api/v1/roles/:id` | Administrator | Delete a non-system-managed role |
 | `GET` | `/api/v1/dashboard/stats` | Administrator | Return dashboard totals |
 
-The interactive documentation describes the registered API paths and their documented request and response schemas. Runtime validation is performed separately by the service and schema layers.
+The interactive documentation describes the registered API paths and their documented request and response schemas. Controllers use those same schemas for runtime request-body validation and response shaping; services operate on the resulting typed values without performing Zod parsing.
 
 ## Quality and tests
 
