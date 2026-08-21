@@ -17,7 +17,10 @@ test("should get users", async () => {
 		_id: expect.any(String),
 		username: expect.any(String),
 		email: expect.any(String),
-		role: expect.any(String),
+		role: {
+			_id: expect.any(String),
+			name: expect.any(String),
+		},
 		dateCreated: expect.any(String),
 		systemManaged: expect.any(Boolean),
 	};
@@ -40,7 +43,10 @@ test("should create user", async () => {
 		_id: expect.any(String),
 		username: newUser.username,
 		email: newUser.email,
-		role: adminRoleId,
+		role: {
+			_id: adminRoleId,
+			name: expect.any(String),
+		},
 		dateCreated: expect.any(String),
 		systemManaged: false,
 	};
@@ -72,7 +78,10 @@ test("should update user", async () => {
 		_id: updatedUser._id,
 		username: updatedUser.username,
 		email: updatedUser.email,
-		role: adminRoleId,
+		role: {
+			_id: adminRoleId,
+			name: expect.any(String),
+		},
 		dateCreated: createResponse.body.dateCreated,
 		systemManaged: false,
 	};
@@ -89,7 +98,10 @@ async function deleteTestUser(userId: string) {
 		_id: userId,
 		username: expect.any(String),
 		email: expect.any(String),
-		role: adminRoleId,
+		role: {
+			_id: adminRoleId,
+			name: expect.any(String),
+		},
 		dateCreated: expect.any(String),
 		systemManaged: false,
 	};

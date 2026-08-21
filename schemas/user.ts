@@ -63,9 +63,7 @@ const persistedUserSchema = z.object({
 export const userResponseSchema = persistedUserSchema
 	.omit({ password: true })
 	.extend({
-		role: persistedRoleSchema
-			.transform((role) => role._id)
-			.pipe(objectIdStringSchema),
+		role: persistedRoleSchema.pick({ _id: true, name: true }),
 	});
 
 export type UpsertUserInput = z.output<typeof upsertUserRequestSchema>;

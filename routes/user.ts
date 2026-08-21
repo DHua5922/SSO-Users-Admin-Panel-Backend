@@ -34,7 +34,8 @@ route(
 		method: "get",
 		tags,
 		summary: "Get all users",
-		description: "Get all users. The password is not included in the response.",
+		description:
+			"Get all users with each role's ID and name. The password is not included in the response.",
 		responses: {
 			"200": {
 				content: {
