@@ -1,5 +1,6 @@
 import { ApiError } from "js-ts-kit";
 import { Types } from "mongoose";
+import { inngest } from "../clients/inngest.ts";
 import {
 	FORBIDDEN_STATUS_CODE,
 	SYSTEM_MANAGED_USER_DELETE_ERROR_MESSAGE,
@@ -63,5 +64,12 @@ export async function deleteUserByIdService(_id: PersistedUser["_id"]) {
 	}
 
 	const deletedUser = await deleteUserByIdDal(_id).populate("role").exec();
+
+	// Send user object ID to Inngest
+	await inngest.send({
+		name: "app/user.deleted",
+		data: { userId: deletedUser._id },
+	});
+
 	return deletedUser;
 }
