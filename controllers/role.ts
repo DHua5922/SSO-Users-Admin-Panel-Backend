@@ -1,10 +1,7 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
 import { SUCCESS_STATUS_CODE } from "../constants.ts";
-import {
-	roleResponseSchema,
-	upsertRoleRequestSchema,
-} from "../schemas/role.ts";
+import { roleResponseSchema } from "../schemas/role.ts";
 import {
 	deleteRoleByIdService,
 	getAllRolesService,
@@ -18,8 +15,7 @@ export async function getRolesController(_req: Request, res: Response) {
 }
 
 export async function upsertRoleController(req: Request, res: Response) {
-	const input = upsertRoleRequestSchema.parse(req.body);
-	const role = await upsertRoleService(input);
+	const role = await upsertRoleService(req.body);
 	const roleResponse = roleResponseSchema.parse(role);
 	res.status(SUCCESS_STATUS_CODE).json(roleResponse);
 }
