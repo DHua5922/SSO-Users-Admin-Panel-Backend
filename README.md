@@ -1,3 +1,5 @@
+[![Continuous Integration](https://github.com/DHua5922/SSO-Users-Admin-Panel-Backend/actions/workflows/ci.yml/badge.svg)](https://github.com/DHua5922/SSO-Users-Admin-Panel-Backend/actions/workflows/ci.yml)
+
 # User Administration API
 
 The backend for a portfolio administration panel that manages users and roles. It exposes a documented REST API, authenticates administrators with JWT access and refresh tokens, and stores data in MongoDB.
@@ -57,16 +59,16 @@ route -> middleware -> controller -> service -> DAL -> model -> MongoDB
                               -> composite service -> services
 ```
 
-Controllers use Zod at the HTTP boundary: request schemas validate untrusted request bodies before calling services, and response schemas validate and shape service results before they are sent to clients. Services therefore receive typed inputs and remain focused on business rules and persistence coordination. Authentication middleware may call a service before the controller to resolve and authorize the current user. The home and documentation routes are intentionally simpler and respond directly from their controllers.
+Zod validation middleware validates and normalizes untrusted request bodies before they reach controllers. Controllers use the validated inputs, then apply response schemas to validate and shape service results before sending them to clients. Services therefore receive typed inputs and remain focused on business rules and persistence coordination. Authentication middleware may call a service before the validation middleware to resolve and authorize the current user. The home and documentation routes are intentionally simpler and respond directly from their controllers.
 
 - `routes/` defines endpoints, middleware order, and OpenAPI metadata.
-- `controllers/` validates request bodies, shapes responses, and translates between HTTP and application operations.
+- `controllers/` consumes validated request bodies, shapes responses, and translates between HTTP and application operations.
 - `services/` contains business rules and coordinates persistence operations.
 - `composite-services/` coordinates operations spanning multiple services.
 - `dal/` contains database queries.
 - `models/` defines MongoDB persistence models.
 - `schemas/` defines request, response, and persistence-related data shapes used for runtime validation, TypeScript inference, and OpenAPI metadata.
-- `middleware/` handles request IDs, authentication, authorization, errors, and request logging.
+- `middleware/` handles request-body validation, request IDs, authentication, authorization, errors, and request logging.
 - `utilities/` contains reusable token, password, and documentation support.
 
 ## Security decisions
@@ -155,7 +157,7 @@ Every response includes a server-generated UUID in the `X-Request-ID` header. Lo
 | `DELETE` | `/api/v1/roles/:id` | Administrator | Delete a non-system-managed role |
 | `GET` | `/api/v1/dashboard/stats` | Administrator | Return dashboard totals |
 
-The interactive documentation describes the registered API paths and their documented request and response schemas. Controllers use those same schemas for runtime request-body validation and response shaping; services operate on the resulting typed values without performing Zod parsing.
+The interactive documentation describes the registered API paths and their documented request and response schemas. Request-validation middleware and controllers reuse those same schemas for runtime request-body validation and response shaping; services operate on the resulting typed values without performing Zod parsing.
 
 ## Quality and tests
 

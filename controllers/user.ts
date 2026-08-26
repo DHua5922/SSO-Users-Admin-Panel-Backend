@@ -1,10 +1,7 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
 import { SUCCESS_STATUS_CODE } from "../constants.ts";
-import {
-	upsertUserRequestSchema,
-	userResponseSchema,
-} from "../schemas/user.ts";
+import { userResponseSchema } from "../schemas/user.ts";
 import {
 	deleteUserByIdService,
 	getAllUsersService,
@@ -18,8 +15,7 @@ export async function getUsersController(_req: Request, res: Response) {
 }
 
 export async function upsertUserController(req: Request, res: Response) {
-	const input = upsertUserRequestSchema.parse(req.body);
-	const user = await upsertUserService(input);
+	const user = await upsertUserService(req.body);
 	const userResponse = userResponseSchema.parse(user);
 	res.status(SUCCESS_STATUS_CODE).json(userResponse);
 }

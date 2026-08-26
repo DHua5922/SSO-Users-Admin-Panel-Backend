@@ -9,6 +9,7 @@ import {
 	errorLoggingMiddleware,
 	loggingMiddleware,
 } from "../middleware/logging.ts";
+import { validateRequestBody } from "../middleware/validation.ts";
 import {
 	upsertUserRequestSchema,
 	userResponseSchema,
@@ -73,6 +74,7 @@ route(
 	},
 	loggingMiddleware,
 	errorLoggingMiddleware(secureMiddleware),
+	errorLoggingMiddleware(validateRequestBody(upsertUserRequestSchema)),
 	errorLoggingMiddleware(upsertUserController),
 );
 

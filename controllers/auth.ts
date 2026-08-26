@@ -1,18 +1,16 @@
 import type { Request, Response } from "express";
 import { SUCCESS_STATUS_CODE } from "../constants.ts";
-import { loginRequestSchema } from "../schemas/auth.ts";
 import { userResponseSchema } from "../schemas/user.ts";
 import { loginService, refreshTokensService } from "../services/auth.ts";
 
 export async function loginController(req: Request, res: Response) {
-	const { email, password } = loginRequestSchema.parse(req.body);
 	const {
 		user,
 		accessToken,
 		refreshToken,
 		cookieAccessTokenExpireTime,
 		cookieRefreshTokenExpireTime,
-	} = await loginService(email, password);
+	} = await loginService(req.body.email, req.body.password);
 
 	setCookies(
 		res,

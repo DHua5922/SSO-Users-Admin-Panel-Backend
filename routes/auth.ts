@@ -10,9 +10,14 @@ import {
 	errorLoggingMiddleware,
 	loggingMiddleware,
 } from "../middleware/logging.ts";
-import { loginRequestSchema } from "../schemas/auth.ts";
-import { userResponseSchema } from "../schemas/user.ts";
+import { validateRequestBody } from "../middleware/validation.ts";
+import { passwordSchema, userResponseSchema } from "../schemas/user.ts";
 import { createDocumentedRoute } from "../utilities/docs.ts";
+
+const loginRequestSchema = z.object({
+	email: z.email(),
+	password: passwordSchema,
+});
 
 const { router, route } = createDocumentedRoute("/api/v1/auth");
 
@@ -57,6 +62,7 @@ route(
 		responses: userResponseConfig,
 	},
 	loggingMiddleware,
+	errorLoggingMiddleware(validateRequestBody(loginRequestSchema)),
 	errorLoggingMiddleware(loginController),
 );
 
