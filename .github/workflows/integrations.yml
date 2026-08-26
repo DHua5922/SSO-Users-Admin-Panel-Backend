@@ -7,6 +7,16 @@ on:
 env:
   NODE_VERSION: "24.x"
   PNPM_VERSION: "11.20.0"
+  MONGO_URI: ${{ secrets.MONGO_TEST_URI }}
+  JWT_SECRET: ${{ secrets.JWT_TEST_SECRET }}
+  INNGEST_EVENT_KEY: ${{ secrets.INNGEST_EVENT_KEY }}
+  GUEST_LOGIN_EMAIL: ${{ secrets.GUEST_LOGIN_EMAIL }}
+  GUEST_LOGIN_PASSWORD: ${{ secrets.GUEST_LOGIN_PASSWORD }}
+  ACCESS_TOKEN_NAME: accessToken
+  ACCESS_TOKEN_EXPIRATION: 15m
+  REFRESH_TOKEN_NAME: refreshToken
+  REFRESH_TOKEN_EXPIRATION: 1d
+  CORS_ORIGIN: http://localhost:3000
 
 jobs:
   integration:
@@ -36,14 +46,4 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Run Integration Tests
-        env:
-          MONGO_URI: ${{ secrets.MONGO_TEST_URI }}
-          JWT_SECRET: ${{ secrets.JWT_TEST_SECRET }}
-          GUEST_LOGIN_EMAIL: ${{ secrets.GUEST_LOGIN_EMAIL }}
-          GUEST_LOGIN_PASSWORD: ${{ secrets.GUEST_LOGIN_PASSWORD }}
-          ACCESS_TOKEN_NAME: accessToken
-          ACCESS_TOKEN_EXPIRATION: 15m
-          REFRESH_TOKEN_NAME: refreshToken
-          REFRESH_TOKEN_EXPIRATION: 7d
-          CORS_ORIGIN: http://localhost:3000
         run: pnpm run test:integrations

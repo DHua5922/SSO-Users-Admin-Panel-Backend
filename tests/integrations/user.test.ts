@@ -2,6 +2,12 @@ import type TestAgent from "supertest/lib/agent.js";
 import { SUCCESS_STATUS_CODE } from "../../constants.ts";
 import { createAuthenticatedAgent } from "./helpers/authenticatedAgent.ts";
 
+vi.mock("../../clients/inngest.ts", () => ({
+	inngest: {
+		send: vi.fn().mockResolvedValue(undefined),
+	},
+}));
+
 let agent: TestAgent;
 
 const baseRoute = "/api/v1/users";
