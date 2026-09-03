@@ -31,8 +31,8 @@ test("should not delete a system-managed user", async () => {
 	expect(inngest.send).not.toHaveBeenCalled();
 });
 
-test("should send a user deleted event after deleting a user in production", async () => {
-	vi.stubEnv("NODE_ENV", "production");
+test("should send a user deleted event after deleting a user outside test", async () => {
+	vi.stubEnv("NODE_ENV", "development");
 	const userId = "507f1f77bcf86cd799439011";
 	const deletedUser = { _id: userId };
 	const exec = vi.fn().mockResolvedValue(deletedUser);
@@ -51,7 +51,7 @@ test("should send a user deleted event after deleting a user in production", asy
 	});
 });
 
-test("should not send a user deleted event outside production", async () => {
+test("should not send a user deleted event in test", async () => {
 	vi.stubEnv("NODE_ENV", "test");
 	const userId = "507f1f77bcf86cd799439011";
 	const deletedUser = { _id: userId };
