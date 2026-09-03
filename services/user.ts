@@ -66,10 +66,12 @@ export async function deleteUserByIdService(_id: PersistedUser["_id"]) {
 	const deletedUser = await deleteUserByIdDal(_id).populate("role").exec();
 
 	// Send user object ID to Inngest
-	await inngest.send({
-		name: "app/user.deleted",
-		data: { userId: deletedUser._id },
-	});
+	if (process.env.NODE_ENV === "production") {
+		await inngest.send({
+			name: "app/user.deleted",
+			data: { userId: deletedUser._id },
+		});
+	}
 
 	return deletedUser;
 }

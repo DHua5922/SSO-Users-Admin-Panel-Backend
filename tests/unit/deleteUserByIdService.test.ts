@@ -31,7 +31,8 @@ test("should not delete a system-managed user", async () => {
 	expect(inngest.send).not.toHaveBeenCalled();
 });
 
-test("should send a user deleted event after deleting a user", async () => {
+test("should send a user deleted event after deleting a user in production", async () => {
+	vi.stubEnv("NODE_ENV", "production");
 	const userId = "507f1f77bcf86cd799439011";
 	const deletedUser = { _id: userId };
 	const exec = vi.fn().mockResolvedValue(deletedUser);
@@ -48,4 +49,20 @@ test("should send a user deleted event after deleting a user", async () => {
 		name: "app/user.deleted",
 		data: { userId },
 	});
+});
+
+test("should not send a user deleted event outside production", async () => {
+	vi.stubEnv("NODE_ENV", "test");
+	const userId = "507f1f77bcf86cd799439011";
+	const deletedUser = { _id: userId };
+	const exec = vi.fn().mockResolvedValue(deletedUser);
+	const populate = vi.fn().mockReturnValue({ exec });
+
+	(getUserDal as Mock).mockReturnValue({
+		exec: vi.fn().mockResolvedValue({ systemManaged: false }),
+	});
+	(deleteUserByIdDal as Mock).mockReturnValue({ populate });
+
+	await expect(deleteUserByIdService(userId)).resolves.toBe(deletedUser);
+	expect(inngest.send).not.toHaveBeenCalled();
 });
