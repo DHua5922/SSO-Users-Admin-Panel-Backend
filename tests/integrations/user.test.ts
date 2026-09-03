@@ -1,4 +1,5 @@
 import type TestAgent from "supertest/lib/agent.js";
+import { inngest } from "../../clients/inngest.ts";
 import { SUCCESS_STATUS_CODE } from "../../constants.ts";
 import { createAuthenticatedAgent } from "./helpers/authenticatedAgent.ts";
 
@@ -115,4 +116,5 @@ async function deleteTestUser(userId: string) {
 
 	expect(deleteResponse.status).toBe(SUCCESS_STATUS_CODE);
 	expect(deleteResponse.body).toEqual(expectedResponseBody);
+	expect(inngest.send).not.toHaveBeenCalled();
 }
